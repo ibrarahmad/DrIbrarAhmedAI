@@ -1,0 +1,34 @@
+# openclaw.yaml — provider + tool policy for the PostgreSQL health agent.
+# Companion to "OpenClaw Runs a Real Local Tool" (@DrIbrarAhmedAI).
+#
+# In a real install these live as two files; they are shown together here for
+# copy/paste. Split them into the paths shown below.
+
+# ── ~/.openclaw/config/providers.yaml ────────────────────────────────────────
+# Local model only. Nothing leaves the host. Low temperature = stable ops
+# summaries, not creative writing.
+provider:    ollama
+base_url:    http://127.0.0.1:11434/v1
+model:       qwen2.5-coder:7b
+temperature: 0.2
+max_tokens:  1024
+
+---
+# ── ~/.openclaw/tools/postgres-health.yaml ───────────────────────────────────
+# OpenClaw gets ONE tool, not a shell. Every run requires human approval and is
+# logged. The model never touches PostgreSQL — this script does, read-only.
+name:              postgres_health_check
+command:           /opt/openclaw/tools/pg_health_readonly.sh
+mode:              read_only
+timeout:           15s
+requires_approval: true
+allowed_user:      health_reader
+blocked_patterns:
+  - sudo
+  - rm
+  - drop
+  - delete
+  - update
+  - insert
+  - alter
+  - "cat ~/.ssh"

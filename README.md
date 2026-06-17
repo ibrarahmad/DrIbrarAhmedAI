@@ -48,6 +48,7 @@ No guesswork — what you see on screen is what runs here.
 | Video | Folder | What you build |
 |-------|--------|----------------|
 | **Build And Secure Your Own AI Agent** | [`openclaw-setup-scripts/`](openclaw-setup-scripts/) | Install OpenClaw, connect Telegram, run real projects, and lock it down. |
+| **OpenClaw Runs a Real Local Tool** | [`postgres-health-agent/`](postgres-health-agent/) | A safe, read-only PostgreSQL health check via a local agent — approval-gated, summarized by local Ollama, delivered to chat. |
 
 > 🆕 More builds added each week — ⭐ star the repo and 🔔 subscribe so you never miss one.
 
@@ -79,13 +80,18 @@ DrIbrarAhmedAI/
 ├── LICENSE                   ← MIT
 ├── CONTRIBUTING.md           ← how to help
 ├── SECURITY.md               ← responsible disclosure
-└── openclaw-setup-scripts/   ← "Build And Secure Your Own AI Agent"
-    ├── README.md             ← full walkthrough + checklist
-    ├── 01-install.sh         ← install + doctor
-    ├── 02-onboard.sh         ← model provider + Telegram
-    ├── 03-harden.sh          ← audit, allowlist, firewall
-    ├── 04-tunnel.sh          ← SSH tunnel to the web UI
-    └── workspace/            ← plain-file templates (BOOT/soul/MEMORY/USER/TOOLS + agents.mmd)
+├── openclaw-setup-scripts/   ← "Build And Secure Your Own AI Agent"
+│   ├── README.md             ← full walkthrough + checklist
+│   ├── 01-install.sh         ← install + doctor
+│   ├── 02-onboard.sh         ← model provider + Telegram
+│   ├── 03-harden.sh          ← audit, allowlist, firewall
+│   ├── 04-tunnel.sh          ← SSH tunnel to the web UI
+│   └── workspace/            ← plain-file templates (BOOT/soul/MEMORY/USER/TOOLS + agents.mmd)
+└── postgres-health-agent/    ← "OpenClaw Runs a Real Local Tool"
+    ├── README.md             ← architecture, setup, troubleshooting
+    ├── health_reader.sql     ← least-privilege read-only role
+    ├── pg_health_readonly.sh ← the one approved tool
+    └── openclaw.yaml         ← Ollama provider + tool policy
 ```
 
 ---
