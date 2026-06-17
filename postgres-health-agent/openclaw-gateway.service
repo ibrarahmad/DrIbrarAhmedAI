@@ -1,0 +1,42 @@
+# openclaw-gateway.service — run the OpenClaw gateway under systemd.
+# Companion to "OpenClaw Runs a Real Local Tool" (@DrIbrarAhmedAI).
+#
+# Install:
+#   sudo cp openclaw-gateway.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now openclaw-gateway
+#
+# Then the commands from the video work verbatim:
+#   journalctl -u openclaw-gateway -n 80 --no-pager
+#   sudo systemctl restart openclaw-gateway
+#   systemctl status openclaw-gateway --no-pager
+
+[Unit]
+Description=OpenClaw Gateway
+Documentation=https://www.youtube.com/@DrIbrarAhmedAI
+# Start after the things it depends on are up.
+After=network-online.target ollama.service postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Run as a dedicated, non-root user — never root.
+User=openclaw
+Group=openclaw
+ExecStart=/usr/local/bin/openclaw gateway run
+Restart=on-failure
+RestartSec=3
+
+# Keep the dashboard on loopback only. Reach it via SSH tunnel, never expose it.
+Environment=OPENCLAW_DASHBOARD_BIND=127.0.0.1:8787
+
+# Hardening — least privilege for a service that can run tools.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+# Allow writing only OpenClaw's own state/config.
+ReadWritePaths=/home/openclaw/.openclaw
+
+[Install]
+WantedBy=multi-user.target

@@ -79,6 +79,8 @@ One controlled path. PostgreSQL is the practical test case.
 | [`health_reader.sql`](health_reader.sql) | Creates the least-privilege `health_reader` role (`pg_monitor` only). |
 | [`pg_health_readonly.sh`](pg_health_readonly.sh) | The one approved tool — read-only health probe. |
 | [`openclaw.yaml`](openclaw.yaml) | Provider config (Ollama) + the single registered tool with its policy. |
+| [`.pgpass.example`](.pgpass.example) | Template for passwordless auth — copy to `~/.pgpass`, `chmod 600`. |
+| [`openclaw-gateway.service`](openclaw-gateway.service) | Sample systemd unit so the gateway runs as a hardened service. |
 
 ---
 
@@ -124,15 +126,25 @@ sudo install -m 0755 pg_health_readonly.sh /opt/openclaw/tools/pg_health_readonl
 /opt/openclaw/tools/pg_health_readonly.sh
 ```
 
-> 🔐 **Secrets:** the script never hardcodes the password. Put it in `~/.pgpass`
-> (`localhost:5432:appdb:health_reader:<pw>`, `chmod 600`) or export `PGPASSWORD`
-> before running. Never commit the real password.
+> 🔐 **Secrets:** the script never hardcodes the password. Use the template:
+> ```bash
+> cp .pgpass.example ~/.pgpass && chmod 600 ~/.pgpass   # then edit the password
+> ```
+> (or export `PGPASSWORD` before running). Never commit the real password.
 
 **5. Point Ollama + register the one tool** — split `openclaw.yaml` into:
 
 ```bash
 ~/.openclaw/config/providers.yaml      # provider block
 ~/.openclaw/tools/postgres-health.yaml # tool block
+```
+
+**5b. (Optional) Run the gateway as a hardened systemd service:**
+
+```bash
+sudo cp openclaw-gateway.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now openclaw-gateway
 ```
 
 **6. Confirm the gateway before any request:**

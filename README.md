@@ -91,7 +91,9 @@ DrIbrarAhmedAI/
     ├── README.md             ← architecture, setup, troubleshooting
     ├── health_reader.sql     ← least-privilege read-only role
     ├── pg_health_readonly.sh ← the one approved tool
-    └── openclaw.yaml         ← Ollama provider + tool policy
+    ├── openclaw.yaml         ← Ollama provider + tool policy
+    ├── .pgpass.example       ← passwordless auth template
+    └── openclaw-gateway.service ← hardened systemd unit
 ```
 
 ---

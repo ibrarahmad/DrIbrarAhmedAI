@@ -1,0 +1,9 @@
+# ~/.pgpass — lets pg_health_readonly.sh authenticate without a hardcoded password.
+#
+# 1. Copy to your home directory:   cp .pgpass.example ~/.pgpass
+# 2. Replace the password field.
+# 3. Lock it down (libpq REQUIRES this or it ignores the file):
+#        chmod 600 ~/.pgpass
+#
+# Format:  hostname:port:database:username:password
+localhost:5432:appdb:health_reader:REPLACE_WITH_A_STRONG_PASSWORD
