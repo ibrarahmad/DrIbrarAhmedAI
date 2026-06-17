@@ -103,13 +103,18 @@ Everything the agent "knows" lives in `~/openclaw/workspace` — no mystery box:
 | File | Purpose |
 |------|---------|
 | `BOOT.md`    | Startup routine — read first. |
-| `MEMORY.md`  | Long-term memory you can edit. |
+| `soul.md`    | Core identity & canon facts — the deepest layer. |
+| `MEMORY.md`  | Long-term memory + journal you can edit. |
 | `USER.md`    | Who you are to the agent. |
 | `TOOLS.md`   | What it is allowed to use. |
 | `agents.mmd` | The agent graph. |
 
-Open them, read them, audit them. Change one core fact and it propagates across
-soul, identity, memory, and journal at once.
+Open them, read them, audit them. Tell the agent a new core fact and it
+propagates across **soul, identity, memory, and journal** at once — then it
+shows you every change (slide 10):
+
+> *"Your favorite is now canon. Update your soul, identity, and memory."*
+> → `soul.md ✓` · `identity ✓` · `memory + journal ✓`
 
 📁 **Ready-to-use templates ship in [`workspace/`](workspace/)** — copy them into
 `~/openclaw/workspace` and edit `USER.md` / `MEMORY.md` so the agent speaks to you:

@@ -85,7 +85,7 @@ DrIbrarAhmedAI/
     ├── 02-onboard.sh         ← model provider + Telegram
     ├── 03-harden.sh          ← audit, allowlist, firewall
     ├── 04-tunnel.sh          ← SSH tunnel to the web UI
-    └── workspace/            ← plain-file templates (BOOT/MEMORY/USER/TOOLS + agents.mmd)
+    └── workspace/            ← plain-file templates (BOOT/soul/MEMORY/USER/TOOLS + agents.mmd)
 ```
 
 ---

@@ -12,5 +12,8 @@
 - briefings: short, rated, no link dumps
 
 ## journal
-<!-- The agent appends dated notes here. Example: -->
-<!-- - 2026-06-18 — set up news briefing + coffee reminder -->
+<!-- The agent appends dated notes here as it works. -->
+- 2026-06-18 — installed gateway, paired Telegram (ibrar_ops_bot), set coffee reminder + morning briefing
+<!-- When a core fact becomes canon, the agent updates soul.md + this file and logs it here. -->
+
+> See also: [`soul.md`](soul.md) — change a canon fact there and it propagates here.
