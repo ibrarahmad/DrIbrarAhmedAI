@@ -1,6 +1,7 @@
 # Dr. Ibrar Ahmed AI
 
-Companion code, setup scripts, and resources for the **[@DrIbrarAhmedAI](https://github.com/ibrarahmad/DrIbrarAhmedAI)** channel —
+Companion code, setup scripts, and resources for the YouTube channel
+**[@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)** —
 a new hands-on AI / security build every week.
 
 > Follow along with each video: clone this repo, open the folder for the build
@@ -39,4 +40,4 @@ are working. Each folder's README spells out the hardening steps — follow them
 
 ---
 
-_Maintained by Ibrar Ahmed · [@DrIbrarAhmedAI](https://github.com/ibrarahmad/DrIbrarAhmedAI)_
+_Maintained by Ibrar Ahmed · ▶ [youtube.com/@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)_
