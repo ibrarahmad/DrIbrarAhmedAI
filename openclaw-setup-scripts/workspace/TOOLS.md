@@ -7,8 +7,8 @@
 >   openclaw tools allow <server>.<tool>
 
 ## allowed
-- `shell.read`        — read-only inspection (ls, cat, status). No writes.
-- `zapier.send_email` — send the daily brief to me.
+- `shell.read`     — read-only inspection (ls, cat, status). No writes.
+- `zapier.search`  — look up items for the daily brief. Read-only.
 
 ## ask-first (gated)
 - `zapier.delete_data` — destructive. Always ASK.

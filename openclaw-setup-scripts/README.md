@@ -170,7 +170,7 @@ Allow exactly what you need; the risky actions should **ask first**:
 
 ```bash
 openclaw mcp list
-openclaw tools allow zapier.send_email   # everything else stays gated
+openclaw tools allow zapier.search       # everything else stays gated
 openclaw logs --follow                    # watch every action fire
 ```
 
