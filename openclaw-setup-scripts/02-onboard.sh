@@ -34,10 +34,15 @@ run openclaw onboard
 echo
 echo "==> Verifying"
 run openclaw doctor
+run openclaw gateway status
 
 cat <<'EOF'
 
-If you see "Gateway live", message your bot on Telegram to begin.
+If gateway status shows "● running" and doctor is green, message your bot
+on Telegram to begin. Send a quick "status?" — a reply confirms the live test.
+
+Tip: copy the templates in ./workspace into ~/openclaw/workspace and edit
+USER.md / MEMORY.md so the agent speaks to you.
 
 Next:
   ./03-harden.sh     # audit, allowlist, firewall — BEFORE giving it real tools

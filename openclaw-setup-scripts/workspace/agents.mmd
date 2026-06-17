@@ -1,0 +1,13 @@
+%% OpenClaw gateway flow — one clear path.
+%% A message goes from you, through the gateway, to a model and its tools,
+%% and every step lands in the logs. Render at https://mermaid.live
+flowchart TD
+    U[User<br/><i>you</i>] --> T[Telegram<br/><i>your channel</i>]
+    T --> G{{Gateway<br/><b>the brain stem</b>}}
+    G --> M[Model<br/><i>any provider</i>]
+    M --> X[MCP Tools<br/><i>on a leash</i>]
+    X --> L[(Logs<br/><i>every action</i>)]
+    G -.-> L
+
+    classDef hub fill:#0e2230,stroke:#22D3EE,stroke-width:2px,color:#E7EEFB;
+    class G hub;

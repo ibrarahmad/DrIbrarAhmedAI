@@ -32,6 +32,7 @@ Companion setup scripts for the video on
 - [The 8-check proof](#-the-8-check-proof)
 - [The workspace is just plain files](#-the-workspace-is-just-plain-files)
 - [Two starter projects](#-two-starter-projects)
+- [Schedules & heartbeats](#-schedules--heartbeats)
 - [Security model](#-security-model)
 - [Troubleshooting](#-troubleshooting)
 
@@ -110,6 +111,15 @@ Everything the agent "knows" lives in `~/openclaw/workspace` — no mystery box:
 Open them, read them, audit them. Change one core fact and it propagates across
 soul, identity, memory, and journal at once.
 
+📁 **Ready-to-use templates ship in [`workspace/`](workspace/)** — copy them into
+`~/openclaw/workspace` and edit `USER.md` / `MEMORY.md` so the agent speaks to you:
+
+```bash
+cp -R workspace/* ~/openclaw/workspace/
+```
+
+`agents.mmd` renders the gateway flow at [mermaid.live](https://mermaid.live).
+
 ---
 
 ## 🚀 Two starter projects
@@ -123,6 +133,23 @@ Prompts straight from the video — paste them into Telegram:
 > **🖥 Project 2 — IT engineer**
 > *"You are an IT engineer. Monitor the server you are on. Check health and
 > security, do not break anything, then build me a live dashboard."*
+
+---
+
+## ⏰ Schedules & heartbeats
+
+Ask in plain language on Telegram — the agent creates a **real cron job** (and
+checks for duplicates first), so it keeps working when you're away:
+
+> *"Every 30 minutes, remind me to drink coffee."*
+
+| Schedule | Job | |
+|----------|-----|---|
+| `*/30 * * * *` | Coffee reminder | scheduled |
+| `0 6 * * *`    | Morning news briefing | scheduled |
+| `0 * * * *`    | Hourly check-in heartbeat | scheduled |
+
+> Heartbeats are what make it feel *alive* — it acts on a timer, not just on reply.
 
 ---
 

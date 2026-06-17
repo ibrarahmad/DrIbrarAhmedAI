@@ -84,7 +84,8 @@ DrIbrarAhmedAI/
     ├── 01-install.sh         ← install + doctor
     ├── 02-onboard.sh         ← model provider + Telegram
     ├── 03-harden.sh          ← audit, allowlist, firewall
-    └── 04-tunnel.sh          ← SSH tunnel to the web UI
+    ├── 04-tunnel.sh          ← SSH tunnel to the web UI
+    └── workspace/            ← plain-file templates (BOOT/MEMORY/USER/TOOLS + agents.mmd)
 ```
 
 ---
