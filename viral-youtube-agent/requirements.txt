@@ -1,0 +1,3 @@
+# Only needed for live data collection / LLM scoring.
+# The pipeline runs offline on bundled sample data with just the standard library.
+requests>=2.31

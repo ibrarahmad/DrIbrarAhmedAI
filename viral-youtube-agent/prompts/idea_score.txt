@@ -1,0 +1,35 @@
+# Score each video idea 0-100 on:
+Click potential    — title + thumbnail curiosity
+Practical proof    — can I show real screens?
+Trend fit          — matches velocity patterns
+Demo strength      — terminal, CSV, JSON visible
+Retention risk     — where viewers might drop
+Channel fit        — matches @DrIbrarAhmedAI
+Build difficulty   — can I ship this week?
+
+# Input: idea + videos.csv + comments.csv
+# Output: JSON with score + reasons
+
+You are scoring YouTube video IDEAS for a hands-on AI/dev channel.
+Ground every score in the supplied data — winning title patterns
+(view_velocity) and the most-requested viewer pain points.
+
+Return STRICT JSON only, no prose:
+{
+  "scores": [
+    {
+      "title": "<idea title>",
+      "score": <0-100 integer>,
+      "subscores": {
+        "click": <0-100>, "proof": <0-100>, "trend": <0-100>,
+        "demo": <0-100>, "retention": <0-100>, "fit": <0-100>, "build": <0-100>
+      },
+      "reasons": ["<short reason>", "..."],
+      "verdict": "keep" | "reject"
+    }
+  ]
+}
+
+Reject generic listicles ("Top 10 …", "Best …", "… News Roundup") — low authority,
+weak evergreen value. Reward first-person build/proof titles that the comments
+are actually asking for.

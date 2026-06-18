@@ -1,0 +1,201 @@
+{
+  "ideas": [
+    {
+      "title": "I Let AI Pick My Next Viral YouTube Video",
+      "score": 91,
+      "subscores": {
+        "click": 96,
+        "proof": 85,
+        "trend": 100,
+        "demo": 85,
+        "retention": 95,
+        "fit": 85,
+        "build": 85
+      },
+      "reasons": [
+        "matches a winning pattern (~25.7K/d velocity)",
+        "strong demo: terminal, CSV, JSON visible"
+      ],
+      "verdict": "keep",
+      "rank": 1
+    },
+    {
+      "title": "I Built an AI Thumbnail Judge",
+      "score": 86,
+      "subscores": {
+        "click": 73,
+        "proof": 85,
+        "trend": 100,
+        "demo": 85,
+        "retention": 95,
+        "fit": 85,
+        "build": 85
+      },
+      "reasons": [
+        "matches a winning pattern (~25.7K/d velocity)",
+        "strong demo: terminal, CSV, JSON visible"
+      ],
+      "verdict": "keep",
+      "rank": 2
+    },
+    {
+      "title": "I Built a Local AI Research Agent",
+      "score": 85,
+      "subscores": {
+        "click": 68,
+        "proof": 85,
+        "trend": 100,
+        "demo": 85,
+        "retention": 95,
+        "fit": 85,
+        "build": 85
+      },
+      "reasons": [
+        "matches a winning pattern (~25.7K/d velocity)",
+        "strong demo: terminal, CSV, JSON visible"
+      ],
+      "verdict": "keep",
+      "rank": 3
+    },
+    {
+      "title": "I Made an AI Shorts Planner",
+      "score": 81,
+      "subscores": {
+        "click": 68,
+        "proof": 85,
+        "trend": 100,
+        "demo": 60,
+        "retention": 95,
+        "fit": 85,
+        "build": 85
+      },
+      "reasons": [
+        "matches a winning pattern (~25.7K/d velocity)",
+        "strong demo: terminal, CSV, JSON visible"
+      ],
+      "verdict": "keep",
+      "rank": 4
+    },
+    {
+      "title": "AI Agent Finds Viral Ideas",
+      "score": 81,
+      "subscores": {
+        "click": 70,
+        "proof": 85,
+        "trend": 73,
+        "demo": 85,
+        "retention": 95,
+        "fit": 85,
+        "build": 85
+      },
+      "reasons": [
+        "matches a winning pattern (~14.2K/d velocity)",
+        "strong demo: terminal, CSV, JSON visible"
+      ],
+      "verdict": "keep",
+      "rank": 5
+    },
+    {
+      "title": "AI Agent Picks Hooks",
+      "score": 78,
+      "subscores": {
+        "click": 58,
+        "proof": 85,
+        "trend": 73,
+        "demo": 85,
+        "retention": 95,
+        "fit": 85,
+        "build": 85
+      },
+      "reasons": [
+        "matches a winning pattern (~14.2K/d velocity)",
+        "strong demo: terminal, CSV, JSON visible"
+      ],
+      "verdict": "keep",
+      "rank": 6
+    },
+    {
+      "title": "AI Agent Writes Titles",
+      "score": 77,
+      "subscores": {
+        "click": 54,
+        "proof": 85,
+        "trend": 73,
+        "demo": 85,
+        "retention": 95,
+        "fit": 85,
+        "build": 85
+      },
+      "reasons": [
+        "matches a winning pattern (~14.2K/d velocity)",
+        "strong demo: terminal, CSV, JSON visible"
+      ],
+      "verdict": "keep",
+      "rank": 7
+    },
+    {
+      "title": "AI Agent Reads Comments",
+      "score": 77,
+      "subscores": {
+        "click": 54,
+        "proof": 85,
+        "trend": 73,
+        "demo": 85,
+        "retention": 95,
+        "fit": 85,
+        "build": 85
+      },
+      "reasons": [
+        "matches a winning pattern (~14.2K/d velocity)",
+        "strong demo: terminal, CSV, JSON visible"
+      ],
+      "verdict": "keep",
+      "rank": 8
+    },
+    {
+      "title": "AI Agent Scores Thumbnails",
+      "score": 76,
+      "subscores": {
+        "click": 50,
+        "proof": 85,
+        "trend": 73,
+        "demo": 85,
+        "retention": 95,
+        "fit": 85,
+        "build": 85
+      },
+      "reasons": [
+        "matches a winning pattern (~14.2K/d velocity)",
+        "strong demo: terminal, CSV, JSON visible"
+      ],
+      "verdict": "keep",
+      "rank": 9
+    }
+  ],
+  "rejected": [
+    {
+      "title": "Top 10 AI Tools in 2026",
+      "score": 0,
+      "verdict": "reject",
+      "reasons": [
+        "generic listicle — low authority, weak evergreen value"
+      ]
+    },
+    {
+      "title": "Best AI Apps",
+      "score": 0,
+      "verdict": "reject",
+      "reasons": [
+        "generic listicle — low authority, weak evergreen value"
+      ]
+    },
+    {
+      "title": "AI News Roundup",
+      "score": 0,
+      "verdict": "reject",
+      "reasons": [
+        "generic listicle — low authority, weak evergreen value"
+      ]
+    }
+  ]
+}
