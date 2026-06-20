@@ -1,0 +1,3 @@
+# Runs on the Python standard library alone — no API key, no install needed.
+# `requests` is only used if you opt into MODEL=local-llm (Ollama).
+requests>=2.31

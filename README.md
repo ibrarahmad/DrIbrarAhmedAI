@@ -50,6 +50,7 @@ No guesswork — what you see on screen is what runs here.
 | **Build And Secure Your Own AI Agent** | [`openclaw-setup-scripts/`](openclaw-setup-scripts/) | Install OpenClaw, connect Telegram, run real projects, and lock it down. |
 | **OpenClaw Runs a Real Local Tool** | [`postgres-health-agent/`](postgres-health-agent/) | A safe, read-only PostgreSQL health check via a local agent — approval-gated, summarized by local Ollama, delivered to chat. |
 | **I Let AI Pick My Next Viral YouTube Video** | [`viral-youtube-agent/`](viral-youtube-agent/) | A Python pipeline that scores video ideas from real YouTube signals (title velocity + comment demand) and writes a production brief. Runs offline on sample data. |
+| **EP 02 — AI Beat My Hook by 48 Points** | [`hook-agent/`](hook-agent/) | One local command scores 10 video hooks on 3 signals (curiosity / specificity / pattern), rejects below 80, and writes a film-ready brief. No API key. |
 
 > 🆕 More builds added each week — ⭐ star the repo and 🔔 subscribe so you never miss one.
 
@@ -95,12 +96,18 @@ DrIbrarAhmedAI/
 │   ├── openclaw.yaml         ← Ollama provider + tool policy
 │   ├── .pgpass.example       ← passwordless auth template
 │   └── openclaw-gateway.service ← hardened systemd unit
-└── viral-youtube-agent/      ← "I Let AI Pick My Next Viral YouTube Video"
-    ├── README.md             ← how it works, config, rubric
-    ├── viral_idea_agent.py   ← orchestrator (runs the whole pipeline)
-    ├── collect_*.py / analyze_*.py / *_ideas.py / build_hook.py
-    ├── prompts/idea_score.txt← the scoring rubric
-    ├── data/ (sample CSVs)   └── output/ (generated brief)
+├── viral-youtube-agent/      ← "I Let AI Pick My Next Viral YouTube Video"
+│   ├── README.md             ← how it works, config, rubric
+│   ├── viral_idea_agent.py   ← orchestrator (runs the whole pipeline)
+│   ├── collect_*.py / analyze_*.py / *_ideas.py / build_hook.py
+│   ├── prompts/idea_score.txt← the scoring rubric
+│   ├── data/ (sample CSVs)   └── output/ (generated brief)
+└── hook-agent/               ← "EP 02 — AI Beat My Hook by 48 Points"
+    ├── README.md             ← signals, pipeline, recorded vs live
+    ├── hook_agent.py         ← the one command (recorded run + --live)
+    ├── scrape/extract/generate/score_*.py
+    ├── prompts/hook_score.txt← the 3-signal rubric
+    └── data/ (niche lib + recorded run)  └── output/ (generated brief)
 ```
 
 ---

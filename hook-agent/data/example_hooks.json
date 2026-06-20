@@ -1,0 +1,29 @@
+{
+  "_note": "The recorded EP02 run for topic 'youtube hooks for creators'. Reproduces the video exactly. Run with --live to score your own topic via the heuristic rubric.",
+  "topic": "youtube hooks for creators",
+  "threshold": 80,
+  "my_hook": {
+    "hook": "How to Write Better YouTube Hooks",
+    "curiosity": 10, "specificity": 18, "pattern": 13, "score": 41,
+    "verdict": "reject",
+    "reason": "Explains instead of creating tension; no numbers; sounds like every other tutorial title."
+  },
+  "hooks": [
+    {"hook": "I Built AI That Writes Hooks Better Than I Do — Proof", "curiosity": 37, "specificity": 28, "pattern": 24, "score": 89, "verdict": "pass", "reason": "Names a competition and demands proof — concrete, niche-breaking claim no one else makes."},
+    {"hook": "My Hook Scored 8.3% CTR. The AI Wrote It. Here's Why.", "curiosity": 35, "specificity": 30, "pattern": 21, "score": 86, "verdict": "pass", "reason": "Hard number (8.3% CTR) plus an open loop ('Here's Why')."},
+    {"hook": "I Tested 10 AI-Written Hooks — One Got 3× More Clicks", "curiosity": 34, "specificity": 27, "pattern": 21, "score": 82, "verdict": "pass", "reason": "Specific test (10, 3×) with a withheld winner."},
+    {"hook": "How I Used AI to Improve My YouTube Hooks", "curiosity": 28, "specificity": 26, "pattern": 20, "score": 74, "verdict": "reject", "reason": "Vague 'how I' promise; 'improve' tells the viewer nothing concrete."},
+    {"hook": "AI vs Human: Who Writes Better YouTube Titles?", "curiosity": 24, "specificity": 24, "pattern": 20, "score": 68, "verdict": "reject", "reason": "Common versus format; no specific outcome promised."},
+    {"hook": "The Secret Behind High-CTR YouTube Hooks", "curiosity": 22, "specificity": 22, "pattern": 17, "score": 61, "verdict": "reject", "reason": "'Secret' without a concrete payoff reads as clickbait."},
+    {"hook": "Using AI for YouTube Titles — Full Guide", "curiosity": 20, "specificity": 22, "pattern": 15, "score": 57, "verdict": "reject", "reason": "'Full Guide' is an explainer format — low curiosity."},
+    {"hook": "YouTube Hook Formula That Works in 2024", "curiosity": 18, "specificity": 20, "pattern": 14, "score": 52, "verdict": "reject", "reason": "'Formula' is predictable; dated year weakens it."},
+    {"hook": "AI Tools for YouTube Creators — Hooks Edition", "curiosity": 14, "specificity": 18, "pattern": 11, "score": 43, "verdict": "reject", "reason": "Saturated listicle angle; the algorithm ignores it."},
+    {"hook": "How to Write Better YouTube Hooks with AI", "curiosity": 12, "specificity": 16, "pattern": 10, "score": 38, "verdict": "reject", "reason": "No curiosity gap; completely generic 'how to' format."}
+  ],
+  "winner_brief": {
+    "hook": "I Built AI That Writes Hooks Better Than I Do — Proof",
+    "thumbnail_text": "PROOF",
+    "first_line": "My hook scored 41. The AI rewrote it to 89. Here is why.",
+    "confidence": "High — top 3% of analyzed hooks in niche"
+  }
+}

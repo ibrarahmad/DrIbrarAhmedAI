@@ -1,0 +1,21 @@
+# Score each YouTube hook 0-100 on three signals (100 points total):
+
+Curiosity Gap     0-40  — Promise something surprising and withhold the answer.
+                          The viewer must click to resolve the tension.
+                          Good: "I built AI that beats me at my own job — here's the proof"
+Specificity       0-30  — Numbers, names, concrete claims make it real and testable.
+                          Good: "8.3% CTR in 48 hours" beats "got more views"
+Pattern Interrupt 0-30  — Break the expected format in the niche. Challenge or
+                          confess; don't explain like every other title.
+
+# Threshold
+Reject anything scoring below 80.
+
+# Auto-reject patterns (curiosity ~0)
+- Listicle / "Tools for …" / "… Edition"
+- Vague "How I …" / "How to …" with no concrete payoff
+- "… Explained" / "… Full Guide" / "… Formula"
+
+# Output
+JSON: { "scores": [ { "hook", "score", "curiosity", "specificity",
+                      "pattern", "verdict": "pass"|"reject", "reason" } ] }
