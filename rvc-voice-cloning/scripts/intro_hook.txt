@@ -1,1 +1,1 @@
-Assalamu Alaikum. Short intro hook for the batch producer demo.
+Short intro hook for the batch producer demo.
