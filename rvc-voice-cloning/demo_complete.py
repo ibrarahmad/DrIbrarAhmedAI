@@ -93,10 +93,17 @@ def run_demo(
         print("HINT: python configure_rvc.py --prefer-library")
         # continue — convert may still work via bridge after wiring
 
-    # ── 3. record ───────────────────────────────────────────────
-    _banner("3/6  RECORD YOUR VOICE")
+    # ── 3. record + PLAY the raw WAV ────────────────────────────
+    _banner("3/6  RECORD YOUR VOICE · PLAY RAW WAV")
     n_raw = _raw_wav_count(root)
     print(f"[record] data/raw → {n_raw} audio file(s)")
+    raw_dir = root / "data" / "raw"
+    raw_wav = None
+    if raw_dir.is_dir():
+        for p in sorted(raw_dir.iterdir()):
+            if p.suffix.lower() in {".wav", ".mp3", ".flac", ".m4a"}:
+                raw_wav = p
+                break
     if n_raw == 0 and not skip_record_check:
         print("HINT: python open_recorder.py  → Save WAV → move into data/raw/")
         print("      (re-run with --skip-record-check to continue without raw takes)")
@@ -104,6 +111,11 @@ def run_demo(
             return 1
     elif n_raw == 0:
         print("[record] skipped check — using existing segments if any")
+    if play_audio and raw_wav is not None:
+        print(f"[play] RAW recording first → {raw_wav.relative_to(root)}")
+        play(raw_wav)
+    elif raw_wav is not None:
+        print(f"[play] skipped — would play {raw_wav.relative_to(root)}")
 
     # ── 4. prepare + train reminder ─────────────────────────────
     _banner("4/6  PREPARE + TRAIN")
@@ -119,9 +131,8 @@ def run_demo(
         print("      Or re-run: python demo_complete.py --baseline-only")
         return 1
 
-    # ── 5. infer (Edge TTS → RVC) ────────────────────────────────
-    _banner("5/6  INFER · Edge TTS → RVC")
-    # Ensure convert command points at bridge (library-first)
+    # ── 5. infer DIFFERENT text (prove clone) ───────────────────
+    _banner("5/6  INFER · NEW SCRIPT (not training lines)")
     convert = str(cfg.get("rvc_convert_command") or "").strip()
     if not convert and not baseline_only:
         print("[config] wiring rvc_infer_bridge via configure_rvc.py …")
@@ -130,23 +141,21 @@ def run_demo(
             cwd=str(root),
             check=False,
         )
-    text_file = root / "scripts" / "sample_line.txt"
-    out_wav = root / "output" / "narration.wav"
+    # Prefer prove script so the clone speaks words it was not just “shown”
+    prove = root / "scripts" / "clone_prove.txt"
+    text_file = prove if prove.is_file() else root / "scripts" / "sample_line.txt"
+    out_wav = root / "output" / "clone_prove.wav"
     text = read_text_file(text_file)
+    print(f"[text] {text_file.relative_to(root)}")
+    print(f"[text] {text[:120]}{'…' if len(text) > 120 else ''}")
     result = infer(root, text, out_wav, baseline_only=baseline_only)
     print(f"[mode] {result['mode']}")
 
-    # ── 6. play ─────────────────────────────────────────────────
-    _banner("6/6  PLAY CLONE")
+    # ── 6. play CLONE on that new text ──────────────────────────
+    _banner("6/6  PLAY CLONE · DIFFERENT TEXT")
     if play_audio and out_wav.is_file():
-        try:
-            play(out_wav)
-        except Exception as exc:
-            print(f"[play] {exc}")
-            if which("afplay"):
-                subprocess.run(["afplay", str(out_wav)], check=False)
-            elif which("ffplay"):
-                subprocess.run(["ffplay", "-nodisp", "-autoexit", str(out_wav)], check=False)
+        print(f"[play] CLONE → {out_wav.relative_to(root)}")
+        play(out_wav)
     else:
         print(f"[play] file ready: {out_wav}")
 
@@ -156,12 +165,14 @@ def run_demo(
         "mode": result["mode"],
         "weights": pth.name if pth else None,
         "index": index.name if index else None,
+        "raw_played": str(raw_wav.relative_to(root)) if raw_wav else None,
+        "prove_text": str(text_file.relative_to(root)),
         "out": result["out"],
         "library": msg,
     }
     write_json(root / "output" / "demo_complete.json", payload)
     print("")
-    print("COMPLETE DEMO READY · no ElevenLabs · own-voice-only")
+    print("COMPLETE DEMO READY · heard raw WAV · heard clone on new text")
     print("wrote output/demo_complete.json")
     return 0
 

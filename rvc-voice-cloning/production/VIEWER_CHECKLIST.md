@@ -7,15 +7,15 @@
 [ ] 4. python configure_rvc.py --prefer-library
 [ ] 5. python configure_rvc.py --check
 [ ] 6. python open_recorder.py  → Record → Save WAV → move into data/raw/
-[ ] 7. python record_voice.py --check
-[ ] 8. python prepare.py --input data/raw && python analyze.py
-[ ] 9. consent.yaml → attested: true  (own voice only)
-[ ] 10. python train_prep.py
-[ ] 11. Train in RVC WebUI → copy speaker.pth + .index → models/rvc/
-[ ] 12. python demo_complete.py
-        (or: rvc infer -m models/rvc/speaker.pth -i base.wav -o out.wav)
-[ ] 13. python play_clone.py --wav output/narration.wav
-[ ] 14. Hear YOUR clone. Comment FREECLONE on the video.
+[ ] 7. python play_clone.py --wav data/raw/my_voice_01.wav   # hear YOUR recording
+[ ] 8. python record_voice.py --check
+[ ] 9. python prepare.py --input data/raw && python analyze.py
+[ ] 10. consent.yaml → attested: true  (own voice only)
+[ ] 11. python train_prep.py
+[ ] 12. Train in RVC WebUI → copy speaker.pth + .index → models/rvc/
+[ ] 13. python infer.py --text-file scripts/clone_prove.txt --out output/clone_prove.wav
+[ ] 14. python play_clone.py --wav output/clone_prove.wav   # clone says DIFFERENT text
+[ ] 15. Hear YOUR clone on new words. Comment FREECLONE on the video.
 
 pip install official RVC → configure → record → train → demo_complete. Free. Local.
 See docs/RVC_SETUP.md

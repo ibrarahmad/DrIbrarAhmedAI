@@ -4,6 +4,8 @@
   "mode": "edge_tts+rvc",
   "weights": "speaker.pth",
   "index": "speaker.index",
-  "out": "output/narration.wav",
+  "raw_played": "data/raw/my_voice_01.wav",
+  "prove_text": "scripts/clone_prove.txt",
+  "out": "output/clone_prove.wav",
   "library": "import rvc OK"
 }
