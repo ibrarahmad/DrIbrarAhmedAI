@@ -18,7 +18,7 @@ Companion code for **[@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)*
 
 ---
 
-> **Purpose:** You do **not** need ElevenLabs or a paid voice API. Watch the full video, follow each numbered step, record your own voice, train once locally, and play your clone — free and simple.
+> **Purpose:** You do **not** need ElevenLabs. You **do** need to build and configure open-source [Retrieval-based-Voice-Conversion](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion) (plus WebUI for train). Watch the full video, follow each step, record your voice, train locally, play your clone.
 
 ---
 
@@ -39,6 +39,10 @@ Companion code for **[@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)*
 
 | File | Purpose |
 |------|---------|
+| `setup_rvc.sh` | Clone + install [RVC](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion) + WebUI |
+| `configure_rvc.py` | Wire `config.yaml` to your RVC/WebUI paths |
+| `rvc_infer_bridge.py` | Bridge infer → WebUI `infer_cli` |
+| `docs/RVC_SETUP.md` | Full build + configure guide |
 | `record_voice.py` | How to capture YOUR voice into `data/raw/` |
 | `open_recorder.py` / `recorder.html` | Browser mic recorder → Save WAV |
 | `play_clone.py` | Play the generated clone WAV |
@@ -72,18 +76,23 @@ cd DrIbrarAhmedAI/rvc-voice-cloning
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# 1) Attest own-voice policy after you confirm recordings are yours
-#    edit consent.yaml → attested: true
+# REQUIRED — build + configure upstream RVC (not ElevenLabs)
+bash setup_rvc.sh
+python configure_rvc.py --webui ../Retrieval-based-Voice-Conversion-WebUI
+python configure_rvc.py --check
+# Details: docs/RVC_SETUP.md
 
-# 2) Dry-run the full loop (Edge TTS baseline until you wire RVC)
-python pipeline.py --text-file scripts/sample_line.txt --skip-gate --baseline-only
-
-# 3) After training, put speaker.pth + speaker.index in models/rvc/
-#    set rvc_convert_command in config.yaml, then:
-python pipeline.py --text-file scripts/sample_line.txt
+# Record → prepare → train in WebUI → copy .pth → infer → play
+python open_recorder.py
+python prepare.py --input data/raw
+python train_prep.py
+# … train in WebUI, copy speaker.pth + .index into models/rvc/ …
+python infer.py --text-file scripts/sample_line.txt
+python play_clone.py
 ```
 
 Requires **ffmpeg** on `PATH` (`brew install ffmpeg`).
+Dry-run with empty `rvc_convert_command` only tests Edge TTS baseline — not your clone.
 
 ---
 

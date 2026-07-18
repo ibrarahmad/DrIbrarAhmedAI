@@ -1,4 +1,11 @@
 # RVC voice cloning companion — paths relative to this folder
+#
+# REQUIRED: build + configure upstream RVC first
+#   https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
+#   bash setup_rvc.sh
+#   python configure_rvc.py --webui ../Retrieval-based-Voice-Conversion-WebUI
+#   python configure_rvc.py --check
+# Full guide: docs/RVC_SETUP.md
 
 sample_rate: 40000
 speaker_name: "demo"
@@ -31,10 +38,12 @@ inference_presets:
 
 # Place your trained weights here after RVC/WebUI training.
 rvc_model_dir: "models/rvc"
-# Optional: path to Retrieval-based-Voice-Conversion-WebUI (or leave empty for dry-run).
+
+# Absolute path to Retrieval-based-Voice-Conversion-WebUI (set by configure_rvc.py).
 rvc_webui_root: ""
-# Template: {base_wav} {out_wav} {model_dir}
-# Empty string = Edge TTS only (baseline / dry-run).
+
+# Wired by configure_rvc.py → rvc_infer_bridge.py {base_wav} {out_wav} {model_dir}
+# Empty string = Edge TTS only (baseline / dry-run until RVC is built).
 rvc_convert_command: ""
 
 rvc_f0method: "rmvpe"
