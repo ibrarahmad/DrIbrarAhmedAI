@@ -1,34 +1,27 @@
 {
-  "purpose": "No ElevenLabs — watch full video → follow each step → clone YOUR voice free",
-  "viewer_goal": "Record YOUR voice → train RVC locally → play YOUR clone",
+  "purpose": "No ElevenLabs — open recorder → Save WAV → train → play YOUR clone",
+  "viewer_goal": "Browser mic record → data/raw → train RVC → play clone",
   "no_paid_api": true,
   "stage_1_record_voice": {
-    "command": "python record_voice.py --check",
-    "drop_files_in": "data/raw/",
+    "open": "python open_recorder.py",
+    "ui": "recorder.html",
+    "actions": ["Record", "Stop", "Save WAV", "move into data/raw/"],
+    "check": "python record_voice.py --check",
     "target": "10+ minutes clean speech",
     "consent": "own_voice_only"
   },
   "stage_2_train": {
     "prepare": "python prepare.py --input data/raw",
     "train_prep": "python train_prep.py",
-    "rvc_steps": [
-      "preprocess",
-      "extract_f0_rmvpe",
-      "extract_hubert",
-      "train",
-      "build_index"
-    ],
     "weights": "models/rvc/speaker.pth",
     "index": "models/rvc/speaker.index",
     "status": "TRAINED",
     "cost": "free / local"
   },
   "stage_3_play_clone": {
-    "script": "scripts/sample_line.txt",
     "generate": "python infer.py --text-file scripts/sample_line.txt",
     "play": "python play_clone.py --wav output/narration.wav",
     "wav": "output/narration.wav",
-    "mp3": "output/narration.mp3",
     "quality": "PASS"
   },
   "tonight": "production/VIEWER_CHECKLIST.md steps 1→12",

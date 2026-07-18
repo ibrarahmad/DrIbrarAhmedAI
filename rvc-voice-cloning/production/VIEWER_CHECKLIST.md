@@ -2,6 +2,7 @@
 [ ] 1. git clone https://github.com/ibrarahmad/DrIbrarAhmedAI
 [ ] 2. cd rvc-voice-cloning && python3 -m venv .venv && pip install -r requirements.txt
 [ ] 3. Record 10+ min of YOUR voice → data/raw/
+      (easiest: python open_recorder.py → Save WAV → move into data/raw/)
 [ ] 4. python record_voice.py --check
 [ ] 5. python prepare.py --input data/raw
 [ ] 6. python analyze.py   # DROP noisy/reverb

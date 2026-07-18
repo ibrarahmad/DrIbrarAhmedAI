@@ -11,22 +11,31 @@ from _lib import ROOT
 
 
 GUIDE = """
-# How to record YOUR voice (macOS / Linux)
+# How to record YOUR voice (complete demo)
 
-1. Quiet room. Same mic for all clips. Speak naturally.
-2. Record 10+ minutes total (many short takes is fine).
-3. Save mono WAV/MP3 files into:  data/raw/
-4. Examples:
+## Option A — browser recorder (easiest)
+  python open_recorder.py
+  → Record → Stop → Save WAV
+  → Move the downloaded .wav into data/raw/
+
+## Option B — any app (Voice Memos / Audacity)
+  Export WAV/MP3 into:  data/raw/
+  Examples:
      data/raw/take_01.wav
-     data/raw/take_02.wav
-5. Then run:
-     python prepare.py --input data/raw --speaker demo
-     python analyze.py
-     python train_prep.py
-6. Train in RVC/WebUI, copy speaker.pth + .index → models/rvc/
-7. Generate your clone:
-     python infer.py --text-file scripts/sample_line.txt
-     python play_clone.py --wav output/narration.wav
+     data/raw/my_voice_01.wav
+
+## Tips
+  Quiet room. Same mic for all clips. Speak naturally.
+  Aim for 10+ minutes total (many short takes is fine).
+
+## Next
+  python record_voice.py --check
+  python prepare.py --input data/raw --speaker demo
+  python analyze.py
+  python train_prep.py
+  # train in RVC/WebUI → models/rvc/speaker.pth + .index
+  python infer.py --text-file scripts/sample_line.txt
+  python play_clone.py --wav output/narration.wav
 
 OWN VOICE ONLY. Set consent.yaml attested: true after you confirm.
 """

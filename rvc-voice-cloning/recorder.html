@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Record YOUR voice → WAV · RVC clone</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --card: #141c2e;
+      --fg: #e8eef8;
+      --muted: #8b9bb4;
+      --good: #3dd68c;
+      --bad: #ff6b6b;
+      --accent: #5ac8fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      background: radial-gradient(1200px 600px at 20% -10%, #1a2744, var(--bg));
+      color: var(--fg);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .wrap {
+      width: min(520px, 100%);
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      padding: 28px 24px 22px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.45);
+    }
+    h1 { margin: 0 0 6px; font-size: 1.35rem; letter-spacing: -.02em; }
+    .sub { color: var(--muted); font-size: .95rem; margin-bottom: 22px; line-height: 1.45; }
+    .meter {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .meter > i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--good));
+      transition: width .05s linear;
+    }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      color: #041018;
+    }
+    button:disabled { opacity: .4; cursor: not-allowed; }
+    #btnRec { background: var(--bad); color: #fff; }
+    #btnStop { background: #f5c542; }
+    #btnSave { background: var(--good); }
+    #btnReset { background: rgba(255,255,255,.12); color: var(--fg); }
+    .status {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .82rem;
+      color: var(--muted);
+      min-height: 1.4em;
+      margin-bottom: 10px;
+    }
+    .status.live { color: var(--bad); }
+    .status.ok { color: var(--good); }
+    audio { width: 100%; margin: 8px 0 14px; }
+    .hint {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.5;
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding-top: 12px;
+    }
+    code { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Record YOUR voice</h1>
+    <p class="sub">No ElevenLabs. Record here, save a WAV, drop it in <code>data/raw/</code>, then train your free RVC clone.</p>
+
+    <div class="meter" aria-hidden="true"><i id="level"></i></div>
+    <div class="status" id="status">Idle — allow microphone when prompted.</div>
+    <audio id="player" controls hidden></audio>
+
+    <div class="row">
+      <button id="btnRec" type="button">● Record</button>
+      <button id="btnStop" type="button" disabled>■ Stop</button>
+      <button id="btnSave" type="button" disabled>⬇ Save WAV</button>
+      <button id="btnReset" type="button" disabled>Reset</button>
+    </div>
+
+    <p class="hint">
+      Tip: quiet room, same mic, 10+ minutes total across short takes.<br />
+      After save → move file to <code>data/raw/</code> →
+      <code>python prepare.py --input data/raw</code>
+    </p>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById("status");
+    const levelEl = document.getElementById("level");
+    const player = document.getElementById("player");
+    const btnRec = document.getElementById("btnRec");
+    const btnStop = document.getElementById("btnStop");
+    const btnSave = document.getElementById("btnSave");
+    const btnReset = document.getElementById("btnReset");
+
+    let audioCtx, mediaStream, source, processor, chunks = [], sampleRate = 44100, recording = false;
+
+    function setStatus(text, cls) {
+      statusEl.textContent = text;
+      statusEl.className = "status" + (cls ? " " + cls : "");
+    }
+
+    function mergeBuffers(chunks) {
+      let len = 0;
+      for (const c of chunks) len += c.length;
+      const out = new Float32Array(len);
+      let off = 0;
+      for (const c of chunks) { out.set(c, off); off += c.length; }
+      return out;
+    }
+
+    function encodeWav(float32, rate) {
+      const n = float32.length;
+      const buffer = new ArrayBuffer(44 + n * 2);
+      const view = new DataView(buffer);
+      const writeStr = (o, s) => { for (let i = 0; i < s.length; i++) view.setUint8(o + i, s.charCodeAt(i)); };
+      writeStr(0, "RIFF");
+      view.setUint32(4, 36 + n * 2, true);
+      writeStr(8, "WAVE");
+      writeStr(12, "fmt ");
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, rate, true);
+      view.setUint32(28, rate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeStr(36, "data");
+      view.setUint32(40, n * 2, true);
+      let o = 44;
+      for (let i = 0; i < n; i++, o += 2) {
+        let s = Math.max(-1, Math.min(1, float32[i]));
+        view.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+      }
+      return new Blob([buffer], { type: "audio/wav" });
+    }
+
+    async function startRec() {
+      chunks = [];
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+      });
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      sampleRate = audioCtx.sampleRate;
+      source = audioCtx.createMediaStreamSource(mediaStream);
+      processor = audioCtx.createScriptProcessor(4096, 1, 1);
+      processor.onaudioprocess = (e) => {
+        if (!recording) return;
+        const input = e.inputBuffer.getChannelData(0);
+        chunks.push(new Float32Array(input));
+        let peak = 0;
+        for (let i = 0; i < input.length; i++) peak = Math.max(peak, Math.abs(input[i]));
+        levelEl.style.width = Math.min(100, Math.round(peak * 140)) + "%";
+      };
+      source.connect(processor);
+      processor.connect(audioCtx.destination);
+      recording = true;
+      btnRec.disabled = true;
+      btnStop.disabled = false;
+      btnSave.disabled = true;
+      btnReset.disabled = true;
+      player.hidden = true;
+      setStatus("Recording… speak naturally.", "live");
+    }
+
+    function stopRec() {
+      recording = false;
+      try { processor && processor.disconnect(); } catch (_) {}
+      try { source && source.disconnect(); } catch (_) {}
+      if (mediaStream) mediaStream.getTracks().forEach((t) => t.stop());
+      if (audioCtx) audioCtx.close();
+      levelEl.style.width = "0%";
+      btnRec.disabled = false;
+      btnStop.disabled = true;
+      const samples = mergeBuffers(chunks);
+      if (!samples.length) {
+        setStatus("No audio captured — try again.");
+        return;
+      }
+      const blob = encodeWav(samples, sampleRate);
+      window.__lastWav = blob;
+      player.src = URL.createObjectURL(blob);
+      player.hidden = false;
+      btnSave.disabled = false;
+      btnReset.disabled = false;
+      const sec = (samples.length / sampleRate).toFixed(1);
+      setStatus("Stopped · " + sec + "s · preview below · Save WAV next.", "ok");
+    }
+
+    function saveWav() {
+      if (!window.__lastWav) return;
+      const a = document.createElement("a");
+      const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+      a.href = URL.createObjectURL(window.__lastWav);
+      a.download = "my_voice_" + stamp + ".wav";
+      a.click();
+      setStatus("Saved · move file into data/raw/ then run prepare.py", "ok");
+    }
+
+    function resetAll() {
+      window.__lastWav = null;
+      player.removeAttribute("src");
+      player.hidden = true;
+      btnSave.disabled = true;
+      btnReset.disabled = true;
+      setStatus("Idle — allow microphone when prompted.");
+    }
+
+    btnRec.onclick = () => startRec().catch((err) => setStatus("Mic error: " + err.message));
+    btnStop.onclick = stopRec;
+    btnSave.onclick = saveWav;
+    btnReset.onclick = resetAll;
+  </script>
+</body>
+</html>

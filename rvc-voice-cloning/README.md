@@ -40,6 +40,7 @@ Companion code for **[@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)*
 | File | Purpose |
 |------|---------|
 | `record_voice.py` | How to capture YOUR voice into `data/raw/` |
+| `open_recorder.py` / `recorder.html` | Browser mic recorder → Save WAV |
 | `play_clone.py` | Play the generated clone WAV |
 | `pipeline.py` | One-command demo loop |
 | `prepare.py` | Raw recordings → clean mono → `metadata.csv` |
