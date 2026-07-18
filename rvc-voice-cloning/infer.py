@@ -32,7 +32,7 @@ async def _edge_tts_to_wav(text: str, voice: str, rate: str, pitch: str, dest: P
     ffmpeg = which("ffmpeg")
     if not ffmpeg:
         shutil.move(str(tmp_mp3), str(dest.with_suffix(".mp3")))
-        raise SystemExit("ffmpeg required to write WAV — brew install ffmpeg")
+        raise SystemExit("ffmpeg required to write WAV -  brew install ffmpeg")
     subprocess.run(
         [ffmpeg, "-y", "-i", str(tmp_mp3), "-ac", "1", "-ar", "40000", str(dest)],
         check=True,
@@ -86,9 +86,9 @@ def infer(
             shutil.copy(base, out_wav)
             mode = "edge_tts_only"
             if baseline_only:
-                print("[rvc] skipped — baseline-only")
+                print("[rvc] skipped -  baseline-only")
             elif pth is None:
-                print("[rvc] skipped — no *.pth in models/rvc/")
+                print("[rvc] skipped -  no *.pth in models/rvc/")
 
     print(f"[out] {out_wav.relative_to(root)}  mode={mode}")
     return {

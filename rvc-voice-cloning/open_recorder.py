@@ -23,7 +23,7 @@ def main() -> int:
     print("OPEN VOICE RECORDER")
     print(f"  {html}")
     print("")
-    print("1. Click Record — allow microphone")
+    print("1. Click Record -  allow microphone")
     print("2. Speak naturally (quiet room, same mic)")
     print("3. Stop → Save WAV")
     print("4. Move the WAV into data/raw/")

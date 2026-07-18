@@ -11,16 +11,16 @@ from _lib import ROOT, find_rvc_weights, load_config, read_metadata, write_json
 
 
 RVC_STEPS = """
-# External RVC train (WebUI or library) — run outside this folder
+# External RVC train (WebUI or library) -  run outside this folder
 # Upstream: https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
 # WebUI:    https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI
 
-1. preprocess  — resample/slice clips → 40k mono
-2. extract F0  — rmvpe (recommended)
+1. preprocess  -  resample/slice clips → 40k mono
+2. extract F0  -  rmvpe (recommended)
 3. extract HuBERT features → 3_feature768 (v2)
-4. train       — G/D from pretrained_v2 (~100–200 epochs)
-5. build index — FAISS .index from training features
-6. export      — copy best G_*.pth + .index → models/rvc/
+4. train       -  G/D from pretrained_v2 (~100-200 epochs)
+5. build index -  FAISS .index from training features
+6. export      -  copy best G_*.pth + .index → models/rvc/
 """
 
 
@@ -31,7 +31,7 @@ def train_prep(root: Path) -> Path:
     meta = read_metadata(seg_dir / "metadata.csv")
     clean = [r for r in meta if (r.get("label") or "").lower() == "clean"]
     if not clean:
-        raise SystemExit("No clean segments — run prepare.py / clean your data first.")
+        raise SystemExit("No clean segments -  run prepare.py / clean your data first.")
 
     total_sec = sum(float(r.get("duration_sec") or 0) for r in clean)
     manifest = {
@@ -60,7 +60,7 @@ def train_prep(root: Path) -> Path:
     if pth:
         print(f"weights present: {pth.name}" + (f" + {index.name}" if index else ""))
     else:
-        print("weights: MISSING — place speaker.pth (+ .index) in models/rvc/ after train")
+        print("weights: MISSING -  place speaker.pth (+ .index) in models/rvc/ after train")
     return out
 
 

@@ -19,7 +19,7 @@ def check_consent(root: Path, *, require_attested: bool = True) -> list[str]:
         if item not in blocked:
             errors.append(f"blocked list missing: {item}")
     if require_attested and not consent.get("attested"):
-        errors.append("consent.yaml attested=false — set attested: true after you confirm own-voice recordings")
+        errors.append("consent.yaml attested=false -  set attested: true after you confirm own-voice recordings")
     return errors
 
 
@@ -41,7 +41,7 @@ def check_dataset(root: Path) -> list[str]:
         )
     noisy = [r for r in rows if (r.get("label") or "").lower() in {"noisy", "reverb"}]
     if noisy:
-        errors.append(f"{len(noisy)} noisy/reverb rows — clean before train")
+        errors.append(f"{len(noisy)} noisy/reverb rows -  clean before train")
     return errors
 
 
@@ -71,7 +71,7 @@ def main() -> int:
     else:
         print(f"QUALITY GATE: {result['status']}")
         for err in result["errors"]:
-            print(f"  - {err}")
+            print(f" - {err}")
         if result["status"] == "PASS":
             print("consent ok · dataset ok · proceed")
     return 0 if result["status"] == "PASS" else 1

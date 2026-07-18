@@ -1,5 +1,5 @@
 {
-  "purpose": "No ElevenLabs — open recorder → Save WAV → train → play YOUR clone",
+  "purpose": "No ElevenLabs -  open recorder → Save WAV → train → play YOUR clone",
   "viewer_goal": "Browser mic record → data/raw → train RVC → play clone",
   "no_paid_api": true,
   "stage_1_record_voice": {

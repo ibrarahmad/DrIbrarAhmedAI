@@ -27,7 +27,7 @@ def play(path: Path) -> int:
             continue
         print(f"using {player}")
         return subprocess.call([bin_path, *args])
-    print("No afplay/ffplay/aplay found — open the WAV manually:")
+    print("No afplay/ffplay/aplay found -  open the WAV manually:")
     print(f"  {path.resolve()}")
     return 0
 

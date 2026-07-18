@@ -7,7 +7,7 @@ conversion uses the **official library**.
 ## Upstream
 
 - Library / API / CLI (required): https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
-- WebUI (train — recommended): https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI
+- WebUI (train -  recommended): https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI
 
 ## Official library (complete convert path)
 
@@ -64,7 +64,7 @@ python demo_complete.py   # full educational demo
 | `rvc_backend` | `library` (default) or `webui` |
 | `rvc_webui_root` | Absolute path to WebUI clone (train + fallback) |
 | `rvc_convert_command` | Calls `rvc_infer_bridge.py {base_wav} {out_wav} {model_dir}` |
-| `rvc_model_dir` | `models/rvc` — put your `*.pth` (+ `*.index`) here |
+| `rvc_model_dir` | `models/rvc` -  put your `*.pth` (+ `*.index`) here |
 | `rvc_f0method` | `rmvpe` (recommended) |
 | `rvc_device` | `cpu` or `cuda` |
 

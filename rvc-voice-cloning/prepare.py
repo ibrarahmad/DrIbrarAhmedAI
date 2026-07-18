@@ -35,7 +35,7 @@ def prepare(root: Path, input_dir: Path, speaker: str) -> Path:
             demo = ROOT / "data" / "segments" / "demo" / "metadata.csv"
             if demo.is_file():
                 shutil.copy(demo, meta)
-                print(f"no raw audio — copied demo metadata → {meta.relative_to(root)}")
+                print(f"no raw audio -  copied demo metadata → {meta.relative_to(root)}")
             else:
                 raise SystemExit(f"No audio in {input_dir} and no demo metadata.")
         return meta

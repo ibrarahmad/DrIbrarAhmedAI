@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Batch producer — run multiple scripts, drop short/failed clips (slide 15)."""
+"""Batch producer -  run multiple scripts, drop short/failed clips (slide 15)."""
 from __future__ import annotations
 
 import argparse
@@ -25,7 +25,7 @@ def batch_produce(
         print(f"[gate] {gate['status']}")
         if gate["status"] != "PASS":
             for err in gate["errors"]:
-                print(f"[gate]  - {err}")
+                print(f"[gate] - {err}")
             raise SystemExit(1)
 
     files = sorted(scripts_dir.glob("*.txt"))

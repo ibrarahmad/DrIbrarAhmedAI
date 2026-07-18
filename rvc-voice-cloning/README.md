@@ -2,7 +2,7 @@
 
 # 🎙️ RVC Voice Cloning
 
-### Train your voice once — Edge TTS → official RVC library → YouTube narration
+### Train your voice once -  Edge TTS → official RVC library → YouTube narration
 
 Companion code for **[@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)**.
 
@@ -77,7 +77,7 @@ cd DrIbrarAhmedAI/rvc-voice-cloning
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# REQUIRED — official RVC library (not ElevenLabs)
+# REQUIRED -  official RVC library (not ElevenLabs)
 bash setup_rvc.sh
 python configure_rvc.py --prefer-library
 python configure_rvc.py --check

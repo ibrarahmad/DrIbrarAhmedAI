@@ -28,7 +28,7 @@ if command -v rvc >/dev/null 2>&1; then
   fi
   rvc dlmodel || true
 else
-  echo "  WARNING: rvc CLI not on PATH yet — open a new shell or:"
+  echo "  WARNING: rvc CLI not on PATH yet -  open a new shell or:"
   echo "    python -m rvc.wrapper.cli.cli --help"
 fi
 

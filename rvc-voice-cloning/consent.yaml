@@ -1,14 +1,14 @@
-# Own-voice-only boundary — ethics as an engineering gate
+# Own-voice-only boundary -  ethics as an engineering gate
 
 policy: own_voice_only
 allowed:
-  - record_own_voice
-  - train_own_weights
-  - convert_own_script_audio
+ - record_own_voice
+ - train_own_weights
+ - convert_own_script_audio
 blocked:
-  - clone_without_consent
-  - impersonate_third_party
-  - ship_stolen_weights
+ - clone_without_consent
+ - impersonate_third_party
+ - ship_stolen_weights
 
 require_explicit_consent: true
 consent_attestation: |

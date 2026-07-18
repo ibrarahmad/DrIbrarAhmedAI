@@ -14,7 +14,7 @@ def export_audio(root: Path, in_wav: Path, out_dir: Path, basename: str) -> tupl
     cfg = load_config(root)
     ffmpeg = which("ffmpeg")
     if not ffmpeg:
-        raise SystemExit("ffmpeg required — brew install ffmpeg")
+        raise SystemExit("ffmpeg required -  brew install ffmpeg")
     if not in_wav.is_file():
         raise SystemExit(f"Missing input: {in_wav}")
 

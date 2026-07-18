@@ -35,7 +35,7 @@ def tool_infer(text_file: str = "scripts/sample_line.txt") -> str:
     return result["out"]
 
 
-# Explicitly absent — do not implement:
+# Explicitly absent -  do not implement:
 #   steal_celebrity_voice
 #   clone_without_consent
 #   impersonate_third_party

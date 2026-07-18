@@ -66,7 +66,7 @@ def write_config(
     pth = _first_pth(model_dir)
     index = _first_index(model_dir)
 
-    # Always wire the bridge — it prefers library API/CLI, then WebUI.
+    # Always wire the bridge -  it prefers library API/CLI, then WebUI.
     convert_cmd = (
         f'"python {root / "rvc_infer_bridge.py"} '
         f'{{base_wav}} {{out_wav}} {{model_dir}}"'
@@ -79,7 +79,7 @@ def write_config(
         notes.append("official RVC library detected (pip / rvc CLI)")
     else:
         notes.append(
-            "RVC library not importable yet — run bash setup_rvc.sh "
+            "RVC library not importable yet -  run bash setup_rvc.sh "
             "(pip install git+https://github.com/RVC-Project/...)"
         )
 
@@ -106,7 +106,7 @@ def write_config(
     print(f"  rvc_convert_command:{convert_cmd}")
     print(f"  rvc_device:         {device}")
     print(f"  rvc_f0method:       {f0method}")
-    print(f"  models/rvc pth:     {pth.name if pth else 'MISSING — train then copy .pth here'}")
+    print(f"  models/rvc pth:     {pth.name if pth else 'MISSING -  train then copy .pth here'}")
     print(f"  models/rvc index:   {index.name if index else 'optional .index'}")
     for n in notes:
         print(f"  note: {n}")
@@ -128,8 +128,8 @@ def check(root: Path) -> int:
     lib_ok = _library_installed()
 
     print("CONFIG CHECK")
-    print(f"  ffmpeg:             {'yes' if which('ffmpeg') else 'NO — brew install ffmpeg'}")
-    print(f"  rvc library:        {'yes' if lib_ok else 'NO — bash setup_rvc.sh'}")
+    print(f"  ffmpeg:             {'yes' if which('ffmpeg') else 'NO -  brew install ffmpeg'}")
+    print(f"  rvc library:        {'yes' if lib_ok else 'NO -  bash setup_rvc.sh'}")
     print(f"  rvc CLI:            {which('rvc') or 'not on PATH'}")
     print(f"  rvc_backend:        {backend}")
     print(f"  rvc_webui_root:     {webui if webui.as_posix() not in {'', '.'} else 'NOT SET (optional for train)'}")
@@ -143,19 +143,19 @@ def check(root: Path) -> int:
     print(f"  .env / assets:      {(root / '.env').is_file()} / {(root / 'assets').is_dir()}")
 
     if not which("ffmpeg"):
-        print("  STATUS: FAIL — install ffmpeg")
+        print("  STATUS: FAIL -  install ffmpeg")
         return 1
     if not cmd:
-        print("  STATUS: PARTIAL — run: python configure_rvc.py --prefer-library")
+        print("  STATUS: PARTIAL -  run: python configure_rvc.py --prefer-library")
         return 1
     if not lib_ok and not (webui.is_dir() and _find_infer_cli(webui)):
-        print("  STATUS: PARTIAL — install RVC library or WebUI")
+        print("  STATUS: PARTIAL -  install RVC library or WebUI")
         return 1
     if not pth:
-        print("  STATUS: CONFIGURED — train (WebUI) → copy .pth → models/rvc/")
+        print("  STATUS: CONFIGURED -  train (WebUI) → copy .pth → models/rvc/")
         print("           then: python demo_complete.py")
         return 0
-    print("  STATUS: READY — python demo_complete.py")
+    print("  STATUS: READY -  python demo_complete.py")
     return 0
 
 
@@ -200,9 +200,9 @@ def main() -> int:
         rvc_lib = guess if guess.is_dir() else None
 
     prefer_library = not args.prefer_webui
-    # Always write config — library may be installed via pip without local clone.
+    # Always write config -  library may be installed via pip without local clone.
     if webui is None and rvc_lib is None and not _library_installed():
-        print("RVC not found yet — writing library-first convert command anyway.")
+        print("RVC not found yet -  writing library-first convert command anyway.")
         print("Next: bash setup_rvc.sh")
         print("  https://github.com/RVC-Project/Retrieval-based-Voice-Conversion")
 
