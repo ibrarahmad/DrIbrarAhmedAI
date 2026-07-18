@@ -2,7 +2,7 @@
 
 # 🎙️ RVC Voice Cloning
 
-### Train your voice once — Edge TTS → Retrieval-based Voice Conversion → YouTube narration
+### Train your voice once — Edge TTS → official RVC library → YouTube narration
 
 Companion code for **[@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)**.
 
@@ -12,13 +12,13 @@ Companion code for **[@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)*
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![RVC](https://img.shields.io/badge/RVC-Retrieval--based-22D3EE?style=flat-square)](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion)
 
-`prepare` → `train (external RVC)` → `infer` → `export`
+`setup_rvc` → `configure` → `record` → `train` → `demo_complete` / `infer` → `play`
 
 </div>
 
 ---
 
-> **Purpose:** You do **not** need ElevenLabs. You **do** need to build and configure open-source [Retrieval-based-Voice-Conversion](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion) (plus WebUI for train). Watch the full video, follow each step, record your voice, train locally, play your clone.
+> **Purpose:** You do **not** need ElevenLabs. You **do** need to build and configure open-source [Retrieval-based-Voice-Conversion](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion). Watch the full video, follow each step, record your voice, train locally, play your clone.
 
 ---
 
@@ -26,6 +26,7 @@ Companion code for **[@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)*
 
 - [What you get](#-what-you-get)
 - [Quick start](#-quick-start)
+- [Complete demo](#-complete-demo)
 - [Architecture](#-architecture)
 - [Pipeline step by step](#-pipeline-step-by-step)
 - [Config knobs](#-config-knobs)
@@ -39,31 +40,31 @@ Companion code for **[@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)*
 
 | File | Purpose |
 |------|---------|
-| `setup_rvc.sh` | Clone + install [RVC](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion) + WebUI |
-| `configure_rvc.py` | Wire `config.yaml` to your RVC/WebUI paths |
-| `rvc_infer_bridge.py` | Bridge infer → WebUI `infer_cli` |
+| `setup_rvc.sh` | `pip install` official RVC library + optional WebUI |
+| `configure_rvc.py` | Wire `config.yaml` (`--prefer-library`) |
+| `rvc_infer_bridge.py` | Convert via library API → `rvc infer` → WebUI |
+| `demo_complete.py` | Full educational demo (6 stages) |
 | `docs/RVC_SETUP.md` | Full build + configure guide |
-| `record_voice.py` | How to capture YOUR voice into `data/raw/` |
-| `open_recorder.py` / `recorder.html` | Browser mic recorder → Save WAV |
+| `.env.example` | Template after `rvc init` / `rvc dlmodel` |
+| `open_recorder.py` / `recorder.html` | Browser mic → Save WAV |
 | `play_clone.py` | Play the generated clone WAV |
-| `pipeline.py` | One-command demo loop |
+| `pipeline.py` | One-command orchestration loop |
 | `prepare.py` | Raw recordings → clean mono → `metadata.csv` |
 | `analyze.py` | Clean vs noisy/reverb report |
 | `train_prep.py` | Manifest + printed RVC train steps |
-| `infer.py` | Edge TTS → optional RVC convert |
+| `infer.py` | Edge TTS → RVC convert |
 | `rvc_core.py` | Retrieval knobs + convert helper |
 | `export.py` | Loudnorm WAV + MP3 |
 | `quality_gate.py` | Consent + dataset gate |
 | `compare.py` | Baseline FAIL vs RVC PASS report |
 | `batch_produce.py` | Batch scripts → drop short clips |
 | `golden_replay.py` | Golden replay test suite |
-| `tools_overview.py` | Three allowed tools facade |
-| `schemas/output_contract.json` | Output file contract |
-| `production/CHECKLIST.md` | Ship checklist |
-| `consent.yaml` | Own-voice-only boundary |
-| `config.yaml` | Presets: natural / clear / broadcast |
+| `consent.yaml` / `config.yaml` | Ethics + presets |
 
-This folder **orchestrates**. Full RVC training runs in [RVC](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion) / [WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI). Place `*.pth` (+ `*.index`) under `models/rvc/`.
+Convert uses the **official library**:
+`pip install git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion`
+
+Training still uses [WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) (library `rvc train` is a stub upstream). Put `*.pth` (+ `*.index`) under `models/rvc/`.
 
 ---
 
@@ -76,23 +77,49 @@ cd DrIbrarAhmedAI/rvc-voice-cloning
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# REQUIRED — build + configure upstream RVC (not ElevenLabs)
+# REQUIRED — official RVC library (not ElevenLabs)
 bash setup_rvc.sh
-python configure_rvc.py --webui ../Retrieval-based-Voice-Conversion-WebUI
+python configure_rvc.py --prefer-library
 python configure_rvc.py --check
-# Details: docs/RVC_SETUP.md
 
-# Record → prepare → train in WebUI → copy .pth → infer → play
+# Record → prepare → train in WebUI → copy .pth → complete demo
 python open_recorder.py
 python prepare.py --input data/raw
 python train_prep.py
 # … train in WebUI, copy speaker.pth + .index into models/rvc/ …
-python infer.py --text-file scripts/sample_line.txt
-python play_clone.py
+python demo_complete.py
 ```
 
 Requires **ffmpeg** on `PATH` (`brew install ffmpeg`).
-Dry-run with empty `rvc_convert_command` only tests Edge TTS baseline — not your clone.
+
+---
+
+## 🎬 Complete demo
+
+```bash
+python demo_complete.py
+```
+
+Stages:
+
+1. Check official RVC library (`import rvc` / `rvc` CLI)
+2. Configure companion (`rvc_infer_bridge`)
+3. Record check (`data/raw/`)
+4. Prepare + train reminder
+5. Edge TTS → RVC convert (`rvc infer` / Python API)
+6. Play clone
+
+Without weights yet:
+
+```bash
+python demo_complete.py --baseline-only --skip-record-check --no-play
+```
+
+Official convert one-liner (after weights + `rvc init`):
+
+```bash
+rvc infer -m models/rvc/speaker.pth -i base.wav -o out.wav -fm rmvpe
+```
 
 ---
 
@@ -110,7 +137,7 @@ Edge TTS ──────────────► base WAV (content + proso
     └─ VITS synthesizer      your timbre
     │
     ▼
-output/narration.wav → loudnorm export
+output/narration.wav → play_clone / loudnorm export
 ```
 
 ---
@@ -120,49 +147,34 @@ output/narration.wav → loudnorm export
 ```bash
 python prepare.py --input data/raw --speaker demo
 python analyze.py
-python train_prep.py          # prints external RVC steps; writes models/training_manifest.json
-# … train in RVC/WebUI, copy weights to models/rvc/ …
+python train_prep.py
+# … train in WebUI, copy weights to models/rvc/ …
 python infer.py --text-file scripts/sample_line.txt --out output/narration.wav
+python play_clone.py
 python export.py --in-wav output/narration.wav --out-dir output --basename narration
-python compare.py             # baseline FAIL vs RVC PASS when wired
-python quality_gate.py        # consent + dataset checks
-python batch_produce.py --skip-gate
-python golden_replay.py --suite anomaly_v1
+python compare.py
+python quality_gate.py
 ```
 
 ---
 
 ## 🎛 Config knobs
 
-Presets in `config.yaml`:
+Presets in `config.yaml`: natural / clear / broadcast (`index_rate`, `protect`).
 
-| Preset | index_rate | protect | Use |
-|--------|------------|---------|-----|
-| natural | 0.75 | 0.45 | softer identity |
-| clear | 0.80 | 0.40 | default narration |
-| broadcast | 0.85 | 0.33 | stronger target timbre |
-
-Also: `f0method=rmvpe`, `edge_tts_voice`, `rvc_convert_command` with `{base_wav}` `{out_wav}` `{model_dir}`.
+Also: `rvc_backend=library`, `f0method=rmvpe`, `rvc_convert_command` → bridge.
 
 ---
 
 ## ✅ Production checklist
 
-```
-[ ] consent.yaml attested: true (own recordings only)
-[ ] ≥ ~10 min clean speech; drop noisy/reverb rows
-[ ] speaker.pth + .index in models/rvc/
-[ ] rvc_convert_command wired to your RVC install
-[ ] ffmpeg on PATH; loudnorm export before upload
-[ ] backup weights; never commit .pth to public forks with others' voices
-[ ] README: educational · own-voice-only · no impersonation
-```
+See `production/VIEWER_CHECKLIST.md` and `docs/RVC_SETUP.md`.
 
 ---
 
 ## 🛡 Ethics
 
-Train and convert **only voices you own** or have written consent for. Do not use this to impersonate people. Deepfake misuse is on you — the gate exists to make consent a first-class engineering check.
+Train and convert **only voices you own** or have written consent for. Do not impersonate people.
 
 ---
 

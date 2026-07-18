@@ -1,26 +1,24 @@
 #!/usr/bin/env python3
-"""Configure companion config.yaml to use a local RVC / WebUI install.
+"""Configure companion config.yaml for official RVC library (+ optional WebUI).
 
-Upstream library:
+Upstream library (required for convert):
   https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
-Training / infer UI (recommended):
+  pip install git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
+  rvc init && rvc dlmodel
+  rvc infer -m model.pth -i in.wav -o out.wav
+
+WebUI (recommended for TRAINING):
   https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI
 """
 from __future__ import annotations
 
 import argparse
+import importlib.util
+import re
 import sys
 from pathlib import Path
 
 from _lib import ROOT, load_config, which
-
-
-DEFAULT_WEBUI_CMD = (
-    'python "{webui}/tools/infer_cli.py" '
-    "--input_path {base_wav} --opt_path {out_wav} "
-    "--model_name {{model}} --index_path {{index}} "
-    "--f0method rmvpe --device cpu"
-)
 
 
 def _find_infer_cli(webui: Path) -> Path | None:
@@ -39,6 +37,18 @@ def _first_index(model_dir: Path) -> Path | None:
     return next(iter(sorted(model_dir.glob("*.index"))), None)
 
 
+def _library_installed() -> bool:
+    return importlib.util.find_spec("rvc") is not None or which("rvc") is not None
+
+
+def _set_key(src: str, key: str, value: str) -> str:
+    pat = re.compile(rf"(?m)^{re.escape(key)}:\s*.*$")
+    line = f"{key}: {value}"
+    if pat.search(src):
+        return pat.sub(line, src)
+    return src.rstrip() + f"\n{line}\n"
+
+
 def write_config(
     root: Path,
     *,
@@ -46,6 +56,7 @@ def write_config(
     rvc_lib: Path | None,
     device: str,
     f0method: str,
+    prefer_library: bool = True,
 ) -> Path:
     cfg_path = root / "config.yaml"
     text = cfg_path.read_text(encoding="utf-8") if cfg_path.is_file() else ""
@@ -55,53 +66,42 @@ def write_config(
     pth = _first_pth(model_dir)
     index = _first_index(model_dir)
 
-    convert_cmd = '""'
-    webui_root = '""'
+    # Always wire the bridge — it prefers library API/CLI, then WebUI.
+    convert_cmd = (
+        f'"python {root / "rvc_infer_bridge.py"} '
+        f'{{base_wav}} {{out_wav}} {{model_dir}}"'
+    )
+    webui_root = f'"{webui}"' if webui and webui.is_dir() else '""'
+    backend = "library" if prefer_library or _library_installed() else "webui"
     notes: list[str] = []
 
-    if webui and webui.is_dir():
-        webui_root = f'"{webui}"'
-        cli = _find_infer_cli(webui)
-        if cli:
-            # Keep placeholders for infer.py template: {base_wav} {out_wav} {model_dir}
-            # Bridge-style: run a small helper that picks *.pth from model_dir
-            convert_cmd = (
-                f'"python {root / "rvc_infer_bridge.py"} '
-                f'{{base_wav}} {{out_wav}} {{model_dir}}"'
-            )
-            notes.append(f"WebUI infer CLI found: {cli}")
-        else:
-            notes.append(
-                f"WebUI at {webui} but infer_cli.py not found — "
-                "set rvc_convert_command manually after WebUI install."
-            )
-            convert_cmd = '""'
-    elif rvc_lib and rvc_lib.is_dir():
-        # Library-style: prefer `rvc infer` if on PATH after pip install
-        convert_cmd = (
-            '"rvc infer -m {model_dir}/*.pth -i {base_wav} -o {out_wav}"'
+    if _library_installed():
+        notes.append("official RVC library detected (pip / rvc CLI)")
+    else:
+        notes.append(
+            "RVC library not importable yet — run bash setup_rvc.sh "
+            "(pip install git+https://github.com/RVC-Project/...)"
         )
-        notes.append(f"RVC library path noted: {rvc_lib} (adjust CLI if needed)")
 
-    # Patch YAML keys (simple replace / append)
-    def set_key(src: str, key: str, value: str) -> str:
-        import re
+    if webui and webui.is_dir():
+        cli = _find_infer_cli(webui)
+        notes.append(f"WebUI train/infer fallback: {webui}")
+        if cli:
+            notes.append(f"WebUI infer_cli: {cli}")
+    elif rvc_lib and rvc_lib.is_dir():
+        notes.append(f"RVC source tree noted: {rvc_lib}")
 
-        pat = re.compile(rf"(?m)^{re.escape(key)}:\s*.*$")
-        line = f"{key}: {value}"
-        if pat.search(src):
-            return pat.sub(line, src)
-        return src.rstrip() + f"\n{line}\n"
-
-    text = set_key(text or "# auto-configured\n", "rvc_model_dir", '"models/rvc"')
-    text = set_key(text, "rvc_webui_root", webui_root)
-    text = set_key(text, "rvc_convert_command", convert_cmd)
-    text = set_key(text, "rvc_device", f'"{device}"')
-    text = set_key(text, "rvc_f0method", f'"{f0method}"')
+    text = _set_key(text or "# auto-configured\n", "rvc_model_dir", '"models/rvc"')
+    text = _set_key(text, "rvc_webui_root", webui_root)
+    text = _set_key(text, "rvc_convert_command", convert_cmd)
+    text = _set_key(text, "rvc_backend", f'"{backend}"')
+    text = _set_key(text, "rvc_device", f'"{device}"')
+    text = _set_key(text, "rvc_f0method", f'"{f0method}"')
 
     cfg_path.write_text(text if text.endswith("\n") else text + "\n", encoding="utf-8")
 
     print("WROTE", cfg_path.relative_to(root))
+    print(f"  rvc_backend:        {backend}")
     print(f"  rvc_webui_root:     {webui_root}")
     print(f"  rvc_convert_command:{convert_cmd}")
     print(f"  rvc_device:         {device}")
@@ -113,6 +113,7 @@ def write_config(
     print("")
     print("VERIFY:")
     print("  python configure_rvc.py --check")
+    print("  python demo_complete.py")
     return cfg_path
 
 
@@ -120,32 +121,42 @@ def check(root: Path) -> int:
     cfg = load_config(root)
     webui = Path(str(cfg.get("rvc_webui_root") or "")).expanduser()
     cmd = str(cfg.get("rvc_convert_command") or "").strip()
+    backend = str(cfg.get("rvc_backend") or "library")
     model_dir = root / str(cfg.get("rvc_model_dir") or "models/rvc")
     pth = _first_pth(model_dir)
     index = _first_index(model_dir)
+    lib_ok = _library_installed()
 
     print("CONFIG CHECK")
     print(f"  ffmpeg:             {'yes' if which('ffmpeg') else 'NO — brew install ffmpeg'}")
-    print(f"  rvc_webui_root:     {webui if webui.as_posix() not in {'', '.'} else 'NOT SET'}")
+    print(f"  rvc library:        {'yes' if lib_ok else 'NO — bash setup_rvc.sh'}")
+    print(f"  rvc CLI:            {which('rvc') or 'not on PATH'}")
+    print(f"  rvc_backend:        {backend}")
+    print(f"  rvc_webui_root:     {webui if webui.as_posix() not in {'', '.'} else 'NOT SET (optional for train)'}")
     if webui.as_posix() not in {"", "."}:
         print(f"  webui exists:       {webui.is_dir()}")
         cli = _find_infer_cli(webui) if webui.is_dir() else None
         print(f"  infer_cli:          {cli or 'missing'}")
-    print(f"  rvc_convert_command:{'SET' if cmd else 'EMPTY (Edge TTS baseline only)'}")
+    print(f"  rvc_convert_command:{'SET' if cmd else 'EMPTY'}")
     print(f"  speaker.pth:        {pth.name if pth else 'MISSING'}")
     print(f"  speaker.index:      {index.name if index else 'none'}")
+    print(f"  .env / assets:      {(root / '.env').is_file()} / {(root / 'assets').is_dir()}")
 
-    ok = True
     if not which("ffmpeg"):
-        ok = False
+        print("  STATUS: FAIL — install ffmpeg")
+        return 1
     if not cmd:
-        print("  STATUS: PARTIAL — build/configure RVC, then re-run configure_rvc.py")
-        ok = False
-    elif not pth:
-        print("  STATUS: CONFIGURED — next train in WebUI and copy .pth into models/rvc/")
-    else:
-        print("  STATUS: READY — python infer.py --text-file scripts/sample_line.txt")
-    return 0 if ok or cmd else 1
+        print("  STATUS: PARTIAL — run: python configure_rvc.py --prefer-library")
+        return 1
+    if not lib_ok and not (webui.is_dir() and _find_infer_cli(webui)):
+        print("  STATUS: PARTIAL — install RVC library or WebUI")
+        return 1
+    if not pth:
+        print("  STATUS: CONFIGURED — train (WebUI) → copy .pth → models/rvc/")
+        print("           then: python demo_complete.py")
+        return 0
+    print("  STATUS: READY — python demo_complete.py")
+    return 0
 
 
 def main() -> int:
@@ -155,14 +166,21 @@ def main() -> int:
         "--webui",
         type=Path,
         default=None,
-        help="Path to Retrieval-based-Voice-Conversion-WebUI clone",
+        help="Path to Retrieval-based-Voice-Conversion-WebUI (train UI)",
     )
     parser.add_argument(
         "--rvc-lib",
         type=Path,
         default=None,
-        help="Path to Retrieval-based-Voice-Conversion library clone",
+        help="Optional path to RVC library source clone",
     )
+    parser.add_argument(
+        "--prefer-library",
+        action="store_true",
+        default=True,
+        help="Prefer official pip library for convert (default)",
+    )
+    parser.add_argument("--prefer-webui", action="store_true", help="Prefer WebUI convert backend")
     parser.add_argument("--device", type=str, default="cpu")
     parser.add_argument("--f0method", type=str, default="rmvpe")
     parser.add_argument("--check", action="store_true")
@@ -181,16 +199,12 @@ def main() -> int:
         guess = parent / "Retrieval-based-Voice-Conversion"
         rvc_lib = guess if guess.is_dir() else None
 
-    if webui is None and rvc_lib is None:
-        print("RVC not found nearby.")
-        print("Build it first:")
-        print("  bash setup_rvc.sh")
-        print("Or:")
-        print("  git clone https://github.com/RVC-Project/Retrieval-based-Voice-Conversion")
-        print("  git clone https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI")
-        print("Then:")
-        print('  python configure_rvc.py --webui /path/to/Retrieval-based-Voice-Conversion-WebUI')
-        return 1
+    prefer_library = not args.prefer_webui
+    # Always write config — library may be installed via pip without local clone.
+    if webui is None and rvc_lib is None and not _library_installed():
+        print("RVC not found yet — writing library-first convert command anyway.")
+        print("Next: bash setup_rvc.sh")
+        print("  https://github.com/RVC-Project/Retrieval-based-Voice-Conversion")
 
     write_config(
         args.root,
@@ -198,6 +212,7 @@ def main() -> int:
         rvc_lib=rvc_lib,
         device=args.device,
         f0method=args.f0method,
+        prefer_library=prefer_library,
     )
     return check(args.root)
 

@@ -3,8 +3,9 @@
 # REQUIRED: build + configure upstream RVC first
 #   https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
 #   bash setup_rvc.sh
-#   python configure_rvc.py --webui ../Retrieval-based-Voice-Conversion-WebUI
+#   python configure_rvc.py --prefer-library
 #   python configure_rvc.py --check
+#   python demo_complete.py
 # Full guide: docs/RVC_SETUP.md
 
 sample_rate: 40000
@@ -39,7 +40,10 @@ inference_presets:
 # Place your trained weights here after RVC/WebUI training.
 rvc_model_dir: "models/rvc"
 
-# Absolute path to Retrieval-based-Voice-Conversion-WebUI (set by configure_rvc.py).
+# Convert backend: library (official pip RVC) | webui
+rvc_backend: "library"
+
+# Absolute path to Retrieval-based-Voice-Conversion-WebUI (optional; used for train + fallback).
 rvc_webui_root: ""
 
 # Wired by configure_rvc.py → rvc_infer_bridge.py {base_wav} {out_wav} {model_dir}

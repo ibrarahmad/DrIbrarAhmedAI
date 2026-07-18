@@ -1,59 +1,57 @@
 #!/usr/bin/env bash
-# Build + install Retrieval-based Voice Conversion (free, local — no ElevenLabs).
-# Upstream: https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
-# Training UI (recommended): https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI
+# Complete setup for Retrieval-based-Voice-Conversion (official library)
+# https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
+
+echo "════════════════════════════════════════════════════"
+echo " COMPLETE RVC SETUP (official library + optional WebUI)"
+echo " https://github.com/RVC-Project/Retrieval-based-Voice-Conversion"
+echo "════════════════════════════════════════════════════"
+echo ""
+
+python3 -m pip install -U pip wheel
+python3 -m pip install -r requirements.txt
+
+echo ""
+echo "[1/4] Install official RVC library (pip)…"
+python3 -m pip install -U "git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git@develop"
+
+echo ""
+echo "[2/4] Initialize RVC assets in this folder (rvc init / dlmodel)…"
+# Prefer working directory = companion root so assets/ lives next to config.yaml
+if command -v rvc >/dev/null 2>&1; then
+  if [[ ! -d assets ]]; then
+    rvc init || rvc env create || true
+  fi
+  rvc dlmodel || true
+else
+  echo "  WARNING: rvc CLI not on PATH yet — open a new shell or:"
+  echo "    python -m rvc.wrapper.cli.cli --help"
+fi
+
+echo ""
+echo "[3/4] Optional WebUI (recommended for TRAINING UI)…"
 PARENT="$(cd "$ROOT/.." && pwd)"
-RVC_LIB="${RVC_LIB_DIR:-$PARENT/Retrieval-based-Voice-Conversion}"
-RVC_WEBUI="${RVC_WEBUI_DIR:-$PARENT/Retrieval-based-Voice-Conversion-WebUI}"
-
-echo "════════════════════════════════════════"
-echo " BUILD RVC (open-source voice conversion)"
-echo "════════════════════════════════════════"
-echo "Companion: $ROOT"
-echo "RVC lib:   $RVC_LIB"
-echo "RVC WebUI: $RVC_WEBUI"
-echo ""
-
-# --- 1) Library (API / CLI) ---
-if [[ ! -d "$RVC_LIB/.git" ]]; then
-  echo "[1/4] Clone Retrieval-based-Voice-Conversion…"
-  git clone --depth 1 https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git "$RVC_LIB"
+WEBUI="$PARENT/Retrieval-based-Voice-Conversion-WebUI"
+if [[ ! -d "$WEBUI/.git" ]]; then
+  git clone --depth 1 https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI.git "$WEBUI" || true
 else
-  echo "[1/4] RVC library already present → $RVC_LIB"
-fi
-
-echo "[2/4] Install RVC library into current Python (editable if possible)…"
-python3 -m pip install -U pip
-if [[ -f "$RVC_LIB/pyproject.toml" || -f "$RVC_LIB/setup.py" ]]; then
-  python3 -m pip install -e "$RVC_LIB" || python3 -m pip install "git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git"
-else
-  python3 -m pip install "git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git" || true
-  echo "  (library README may still be early — WebUI path below is the practical train/infer UI)"
-fi
-
-# --- 2) WebUI (train + infer — what most creators use) ---
-if [[ ! -d "$RVC_WEBUI/.git" ]]; then
-  echo "[3/4] Clone Retrieval-based-Voice-Conversion-WebUI…"
-  git clone --depth 1 https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI.git "$RVC_WEBUI"
-else
-  echo "[3/4] RVC WebUI already present → $RVC_WEBUI"
-fi
-
-echo "[4/4] WebUI requirements (may take a few minutes)…"
-if [[ -f "$RVC_WEBUI/requirements.txt" ]]; then
-  python3 -m pip install -r "$RVC_WEBUI/requirements.txt" || {
-    echo "  WARNING: full WebUI pip install failed — install PyTorch for your GPU/CPU from pytorch.org, then retry."
-  }
-else
-  echo "  No requirements.txt found — follow WebUI README install steps."
+  echo "  WebUI already at $WEBUI"
 fi
 
 echo ""
-echo "NEXT — configure this companion to use your RVC install:"
-echo "  python configure_rvc.py --webui \"$RVC_WEBUI\""
+echo "[4/4] Wire companion config.yaml…"
+python3 configure_rvc.py --prefer-library ${WEBUI:+--webui "$WEBUI"} || python3 configure_rvc.py --prefer-library
+
 echo ""
-echo "Then record → prepare → train in WebUI → copy .pth+.index → models/rvc/ → infer → play"
-echo "Docs: README.md  ·  Upstream: https://github.com/RVC-Project/Retrieval-based-Voice-Conversion"
+echo "DONE. Next:"
+echo "  python configure_rvc.py --check"
+echo "  python open_recorder.py          # record YOUR voice → data/raw/"
+echo "  python prepare.py --input data/raw"
+echo "  # train in WebUI (or when library train lands), copy .pth → models/rvc/"
+echo "  python demo_complete.py          # full demo: TTS→RVC→play"
+echo ""
+echo "Docs: docs/RVC_SETUP.md"

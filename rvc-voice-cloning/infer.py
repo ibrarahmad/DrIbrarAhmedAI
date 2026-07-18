@@ -69,24 +69,24 @@ def infer(
             )
         )
 
-        use_rvc = (
-            not baseline_only
-            and bool(convert_cmd)
-            and pth is not None
-        )
+        use_rvc = not baseline_only and pth is not None
         if use_rvc:
             print(f"[rvc] model={pth.name} index={index.name if index else 'none'}")
             print(f"[rvc] preset={knobs['preset']} index_rate={knobs.get('index_rate')} "
                   f"protect={knobs.get('protect')} f0method={knobs.get('f0method')}")
-            run_rvc(convert_cmd, base, out_wav, model_dir)
+            if convert_cmd:
+                run_rvc(convert_cmd, base, out_wav, model_dir)
+            else:
+                # Official library path when config not wired yet
+                from rvc_infer_bridge import convert as rvc_convert
+
+                rvc_convert(base, out_wav, model_dir)
             mode = "edge_tts+rvc"
         else:
             shutil.copy(base, out_wav)
             mode = "edge_tts_only"
             if baseline_only:
                 print("[rvc] skipped — baseline-only")
-            elif not convert_cmd:
-                print("[rvc] skipped — rvc_convert_command empty (dry-run / baseline)")
             elif pth is None:
                 print("[rvc] skipped — no *.pth in models/rvc/")
 

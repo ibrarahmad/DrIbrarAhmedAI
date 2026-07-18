@@ -1,2 +1,5 @@
 PyYAML>=6.0
 edge-tts>=6.1.0
+# Official RVC (install via setup_rvc.sh — heavy deps / torch):
+#   pip install git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git@develop
+python-dotenv>=1.0.0

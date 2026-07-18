@@ -1,0 +1,9 @@
+{
+  "demo": "complete",
+  "upstream": "https://github.com/RVC-Project/Retrieval-based-Voice-Conversion",
+  "mode": "edge_tts+rvc",
+  "weights": "speaker.pth",
+  "index": "speaker.index",
+  "out": "output/narration.wav",
+  "library": "import rvc OK"
+}

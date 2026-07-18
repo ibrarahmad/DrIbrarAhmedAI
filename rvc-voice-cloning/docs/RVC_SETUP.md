@@ -1,67 +1,102 @@
 # Build & configure Retrieval-based Voice Conversion (required)
 
-You must build and configure **RVC** yourself. This companion folder only
-orchestrates record → prepare → infer → play. Training + conversion run in RVC.
+You must build and configure **RVC** yourself. This companion folder
+orchestrates record → prepare → infer → play. Training usually runs in WebUI;
+conversion uses the **official library**.
 
 ## Upstream
 
-- Library / API: https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
-- WebUI (train + infer — recommended): https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI
+- Library / API / CLI (required): https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
+- WebUI (train — recommended): https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI
 
-## One-shot setup
+## Official library (complete convert path)
+
+```bash
+pip install git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git@develop
+
+# Working directory = rvc-voice-cloning/
+rvc init          # creates assets/ + .env
+rvc dlmodel       # download hubert / rmvpe / pretrained assets
+# or: cp .env.example .env  and fix paths after dlmodel
+
+# Convert (after you have models/rvc/speaker.pth):
+rvc infer -m models/rvc/speaker.pth -i base.wav -o out.wav -fm rmvpe
+```
+
+Python API (same library):
+
+```python
+from pathlib import Path
+from dotenv import load_dotenv
+from scipy.io import wavfile
+from rvc.modules.vc.modules import VC
+
+load_dotenv(".env")
+vc = VC()
+vc.get_vc("models/rvc/speaker.pth")
+tgt_sr, audio_opt, times, _ = vc.vc_inference(1, Path("base.wav"))
+wavfile.write("out.wav", tgt_sr, audio_opt)
+```
+
+## One-shot setup (companion)
 
 From `rvc-voice-cloning/`:
 
 ```bash
-# 1) Clone + install RVC library and WebUI (next to this folder by default)
 bash setup_rvc.sh
-
-# 2) Wire paths into config.yaml
-python configure_rvc.py --webui ../Retrieval-based-Voice-Conversion-WebUI
-
-# 3) Verify
+python configure_rvc.py --prefer-library
 python configure_rvc.py --check
+python demo_complete.py   # full educational demo
 ```
 
 ## What setup_rvc.sh does
 
-1. `git clone` [Retrieval-based-Voice-Conversion](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion)
-2. `pip install -e` that library (or git+ URL)
-3. `git clone` [Retrieval-based-Voice-Conversion-WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI)
-4. `pip install -r` WebUI requirements (install PyTorch for your GPU/CPU if needed)
+1. `pip install` companion requirements
+2. `pip install` official RVC library from GitHub `develop`
+3. `rvc init` / `rvc dlmodel` (assets + `.env`)
+4. Optional clone of WebUI next to this folder (training UI)
+5. `configure_rvc.py --prefer-library` → wires `rvc_infer_bridge.py`
 
 ## What configure_rvc.py writes
 
-In `config.yaml`:
-
 | Key | Meaning |
 |-----|---------|
-| `rvc_webui_root` | Absolute path to WebUI clone |
+| `rvc_backend` | `library` (default) or `webui` |
+| `rvc_webui_root` | Absolute path to WebUI clone (train + fallback) |
 | `rvc_convert_command` | Calls `rvc_infer_bridge.py {base_wav} {out_wav} {model_dir}` |
 | `rvc_model_dir` | `models/rvc` — put your `*.pth` (+ `*.index`) here |
 | `rvc_f0method` | `rmvpe` (recommended) |
 | `rvc_device` | `cpu` or `cuda` |
 
-## Train in WebUI (after configure)
+`rvc_infer_bridge.py` order when `rvc_backend=library`:
 
-1. Launch WebUI (`python infer-web.py` inside the WebUI folder — see its README)
+1. Python API (`rvc.modules.vc.modules.VC`)
+2. CLI (`rvc infer …`)
+3. WebUI `tools/infer_cli.py` (if `rvc_webui_root` set)
+
+## Train (WebUI still recommended)
+
+Library `rvc train` is still a stub upstream. Use WebUI:
+
+1. Launch WebUI (`python infer-web.py` inside the WebUI folder)
 2. Train on clips from `data/segments/<speaker>/`
-3. Export / copy best `G_*.pth` → `models/rvc/speaker.pth`
+3. Copy best `G_*.pth` → `models/rvc/speaker.pth`
 4. Copy FAISS `.index` next to it
-5. `python configure_rvc.py --check` → should say READY
-6. `python infer.py --text-file scripts/sample_line.txt`
-7. `python play_clone.py`
+5. `python configure_rvc.py --check` → READY
+6. `python demo_complete.py` or `python infer.py` + `python play_clone.py`
 
-## Manual configure (if paths differ)
+## Complete demo
 
 ```bash
-python configure_rvc.py \
-  --webui /absolute/path/to/Retrieval-based-Voice-Conversion-WebUI \
-  --device cuda \
-  --f0method rmvpe
+python demo_complete.py
+# stages: library → configure → record check → prepare/train → infer → play
 ```
 
-Or edit `config.yaml` by hand, then `--check`.
+Dry-run without weights:
+
+```bash
+python demo_complete.py --baseline-only --skip-record-check --no-play
+```
 
 ## Dry-run without RVC
 
