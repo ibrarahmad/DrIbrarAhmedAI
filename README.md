@@ -51,7 +51,7 @@ No guesswork — what you see on screen is what runs here.
 | **OpenClaw Runs a Real Local Tool** | [`postgres-health-agent/`](postgres-health-agent/) | A safe, read-only PostgreSQL health check via a local agent — approval-gated, summarized by local Ollama, delivered to chat. |
 | **I Let AI Pick My Next Viral YouTube Video** | [`viral-youtube-agent/`](viral-youtube-agent/) | A Python pipeline that scores video ideas from real YouTube signals (title velocity + comment demand) and writes a production brief. Runs offline on sample data. |
 | **EP 02 — AI Beat My Hook by 48 Points** | [`hook-agent/`](hook-agent/) | One local command scores 10 video hooks on 3 signals (curiosity / specificity / pattern), rejects below 80, and writes a film-ready brief. No API key. |
-| **Clone Your Voice Free — No ElevenLabs (RVC)** | [`rvc-voice-cloning/`](rvc-voice-cloning/) | Record your voice → train RVC locally → play your clone. Free open-source path — no ElevenLabs. Follow numbered steps 1→12. |
+| **Clone Your Voice Free — No ElevenLabs (RVC)** | [`rvc-voice-cloning/`](rvc-voice-cloning/) | Build [RVC](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion) + configure, then record → train → play your clone. Free. No ElevenLabs. |
 
 > 🆕 More builds added each week — ⭐ star the repo and 🔔 subscribe so you never miss one.
 
