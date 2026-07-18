@@ -68,7 +68,7 @@ def write_config(
 
     # Always wire the bridge - it prefers library API/CLI, then WebUI.
     convert_cmd = (
-        f'"python {root / "rvc_infer_bridge.py"} '
+        f'"python3 {root / "rvc_infer_bridge.py"} '
         f'{{base_wav}} {{out_wav}} {{model_dir}}"'
     )
     webui_root = f'"{webui}"' if webui and webui.is_dir() else '""'
@@ -126,6 +126,8 @@ def check(root: Path) -> int:
     pth = _first_pth(model_dir)
     index = _first_index(model_dir)
     lib_ok = _library_installed()
+    # Must match setup_rvc.sh / video Slide 4
+    webui_pin = "c1e005f0e226a3c2a10adfc8a9be03a6944506d0"
 
     print("CONFIG CHECK")
     print(f"  ffmpeg:             {'yes' if which('ffmpeg') else 'NO - brew install ffmpeg'}")
@@ -137,6 +139,27 @@ def check(root: Path) -> int:
         print(f"  webui exists:       {webui.is_dir()}")
         cli = _find_infer_cli(webui) if webui.is_dir() else None
         print(f"  infer_cli:          {cli or 'missing'}")
+        head = ""
+        git_dir = webui / ".git"
+        if webui.is_dir() and git_dir.exists():
+            import subprocess
+
+            try:
+                head = subprocess.check_output(
+                    ["git", "-C", str(webui), "rev-parse", "HEAD"],
+                    text=True,
+                ).strip()
+            except Exception:
+                head = ""
+        if head:
+            ok = head == webui_pin
+            print(f"  webui pin:          {head[:12]}{' OK' if ok else ' MISMATCH — re-run bash setup_rvc.sh'}")
+            if not ok:
+                print(f"  expected pin:       {webui_pin[:12]}")
+        req = webui / "requirements.txt"
+        dl = webui / "tools" / "download_models.py"
+        print(f"  webui requirements: {'yes' if req.is_file() else 'MISSING'}")
+        print(f"  download_models.py: {'yes' if dl.is_file() else 'MISSING'}")
     print(f"  rvc_convert_command:{'SET' if cmd else 'EMPTY'}")
     print(f"  speaker.pth:        {pth.name if pth else 'MISSING'}")
     print(f"  speaker.index:      {index.name if index else 'none'}")
@@ -154,9 +177,12 @@ def check(root: Path) -> int:
         return 0
     if not pth:
         print("  STATUS: CONFIGURED - train (WebUI) → copy .pth → models/rvc/")
-        print("           then: python demo_complete.py")
+        print("           guide: docs/TRAIN_WEBUI.md")
+        print("           then: python next_step.py")
         return 0
-    print("  STATUS: READY - python demo_complete.py")
+    print("  STATUS: weights ready")
+    print("  NEXT: python infer.py --text-file scripts/clone_prove.txt --out output/clone_prove.wav")
+    print("        python play_clone.py --wav output/clone_prove.wav")
     return 0
 
 

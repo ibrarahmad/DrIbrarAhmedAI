@@ -12,7 +12,17 @@ conversion uses the **official library**.
 ## Official library (complete convert path)
 
 ```bash
-pip install git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git@develop
+# Pin a tested commit (develop moves). Tested 2026-07-19 · macOS · Python 3.10–3.11 · FFmpeg 8.x
+pip install git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git@7b284a634667c34103eaaeed972b48ccdb4b893e
+```
+
+WebUI (train UI) is a **different repo**. `setup_rvc.sh` pins it to:
+
+```text
+c1e005f0e226a3c2a10adfc8a9be03a6944506d0
+```
+
+Do not float on WebUI `HEAD`. Prefer `bash setup_rvc.sh` (venv required; hard-fails on clone/pip/models).
 
 # Working directory = rvc-voice-cloning/
 rvc init          # creates assets/ + .env
@@ -49,13 +59,25 @@ python configure_rvc.py --check
 python demo_complete.py   # full educational demo
 ```
 
-## What setup_rvc.sh does
+## What setup_rvc.sh does (hard-fail — matches video Slide 4)
 
-1. `pip install` companion requirements
-2. `pip install` official RVC library from GitHub `develop`
-3. `rvc init` / `rvc dlmodel` (assets + `.env`)
-4. Optional clone of WebUI next to this folder (training UI)
-5. `configure_rvc.py --prefer-library` → wires `rvc_infer_bridge.py`
+1. Require active `.venv` + Homebrew + FFmpeg + Python **3.10–3.11**
+2. `pip install` companion `requirements.txt`
+3. Prefetch `av==18` binary wheel (FFmpeg 8 Macs), then install **pinned** RVC `@7b284a634667…` with `--no-deps` + runtime deps (never `develop` / HEAD)
+4. `rvc init` / `rvc dlmodel` for companion convert assets
+5. Clone WebUI next to this folder and **detach to** `c1e005f0e226…`
+6. `pip install -r` WebUI `requirements.txt` + `python tools/download_models.py`
+7. `configure_rvc.py --prefer-library` → wires `rvc_infer_bridge.py`
+
+Success lines you should see:
+
+```text
+[pin] library @7b284a634667
+[pin] WebUI @c1e005f0e226 (hard fail if clone/pip/models fail)
+[ok]  library · WebUI deps · download_models
+```
+
+If any of those fail, the script exits non-zero. There is no `|| true` on pin/clone/pip/models.
 
 ## What configure_rvc.py writes
 
@@ -74,16 +96,19 @@ python demo_complete.py   # full educational demo
 2. CLI (`rvc infer …`)
 3. WebUI `tools/infer_cli.py` (if `rvc_webui_root` set)
 
-## Train (WebUI still recommended)
+## Train (WebUI — required for beginners)
 
-Library `rvc train` is still a stub upstream. Use WebUI:
+Full field-by-field guide: **[docs/TRAIN_WEBUI.md](TRAIN_WEBUI.md)**  
+Fixes: **[docs/TROUBLESHOOT.md](TROUBLESHOOT.md)**
 
-1. Launch WebUI (`python infer-web.py` inside the WebUI folder)
-2. Train on clips from `data/segments/<speaker>/`
-3. Copy best `G_*.pth` → `models/rvc/speaker.pth`
-4. Copy FAISS `.index` next to it
-5. `python configure_rvc.py --check` → READY
-6. `python demo_complete.py` or `python infer.py` + `python play_clone.py`
+1. Record **10+ minutes** clean speech → `prepare.py`
+2. `cd ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI && python infer-web.py`
+3. Browser: http://localhost:7865 → **Train** tab
+4. Use exact fields in TRAIN_WEBUI.md (`myvoice`, 40k, rmvpe, cpu, 200 epochs, …)
+5. Preprocess → extract features → train → build index
+6. Copy `assets/weights/myvoice.pth` + `.index` → companion `models/rvc/`
+7. `python configure_rvc.py --check` → **STATUS: weights ready**
+8. `python infer.py` + `python play_clone.py`
 
 ## Complete demo
 

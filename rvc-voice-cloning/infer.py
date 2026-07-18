@@ -31,7 +31,7 @@ def _ffmpeg_to_wav(src: Path, dest: Path, sample_rate: int = 40000) -> None:
     )
 
 
-def _say_to_wav(text: str, dest: Path, sample_rate: int = 40000) -> None:
+def _say_to_wav(text: str, dest: Path, sample_rate: int = 40000, voice: str = "Fred") -> None:
     """Offline Mac TTS so infer still works without Edge network."""
     say = which("say")
     if not say:
@@ -40,10 +40,27 @@ def _say_to_wav(text: str, dest: Path, sample_rate: int = 40000) -> None:
             "Fix network for edge-tts, or install ffmpeg + use a Mac."
         )
     aiff = dest.with_suffix(".aiff")
-    subprocess.run([say, "-o", str(aiff), text], check=True, capture_output=True)
+    # Prefer an explicit male voice; never fall back to the system default (often female).
+    cmd = [say, "-v", voice, "-o", str(aiff), text]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True)
+    except subprocess.CalledProcessError:
+        # Older macOS may lack Fred — try Albert, then bare say with warning.
+        for alt in ("Albert", "Daniel", "Alex"):
+            try:
+                subprocess.run([say, "-v", alt, "-o", str(aiff), text], check=True, capture_output=True)
+                voice = alt
+                break
+            except subprocess.CalledProcessError:
+                continue
+        else:
+            raise SystemExit(
+                "macOS say could not use a male voice (Fred/Albert/Daniel/Alex). "
+                "Install a US English male voice in System Settings → Accessibility → Spoken Content."
+            )
     _ffmpeg_to_wav(aiff, dest, sample_rate=sample_rate)
     aiff.unlink(missing_ok=True)
-    print("[tts] backend=say (offline macOS)")
+    print(f"[tts] backend=say voice={voice} (offline macOS)")
 
 
 async def _edge_tts_to_wav(text: str, voice: str, rate: str, pitch: str, dest: Path) -> None:
@@ -59,10 +76,11 @@ async def _edge_tts_to_wav(text: str, voice: str, rate: str, pitch: str, dest: P
 
 def text_to_wav(text: str, dest: Path, cfg: dict) -> str:
     """Return backend name used."""
+    say_voice = str(cfg.get("say_voice") or "Fred")
     try:
         import edge_tts  # noqa: F401
     except ImportError:
-        _say_to_wav(text, dest)
+        _say_to_wav(text, dest, voice=say_voice)
         return "say"
 
     try:
@@ -78,7 +96,7 @@ def text_to_wav(text: str, dest: Path, cfg: dict) -> str:
         return "edge-tts"
     except Exception as exc:
         print(f"[tts] edge-tts failed ({exc.__class__.__name__}); trying macOS say")
-        _say_to_wav(text, dest)
+        _say_to_wav(text, dest, voice=say_voice)
         return "say"
 
 
@@ -117,13 +135,16 @@ def infer(
                 rvc_convert(base, out_wav, model_dir)
             mode = f"{backend}+rvc"
         else:
+            if not baseline_only and pth is None:
+                raise SystemExit(
+                    "FAIL: no models/rvc/*.pth — refusing to write a fake clone.\n"
+                    "  Train in WebUI, copy speaker.pth (+ .index) → models/rvc/\n"
+                    "  Then re-run infer (or pass --baseline-only for TTS-only smoke)."
+                )
             shutil.copy(base, out_wav)
             mode = f"{backend}_only"
             if baseline_only:
                 print("[rvc] skipped - baseline-only")
-            elif pth is None:
-                print("[rvc] skipped - no *.pth in models/rvc/")
-                print("[rvc] train in WebUI, copy speaker.pth here, then re-run infer")
 
     print(f"[out] {out_wav.relative_to(root)}  mode={mode}")
     return {
@@ -158,7 +179,22 @@ def main() -> int:
     out = args.out or (args.root / "output" / "narration.wav")
     if not out.is_absolute():
         out = args.root / out
-    infer(args.root, text, out, baseline_only=args.baseline_only, preset=args.preset)
+    result = infer(args.root, text, out, baseline_only=args.baseline_only, preset=args.preset)
+    # Sidecar proof for next_step / play gates
+    try:
+        import json
+        from datetime import datetime, timezone
+
+        meta = {
+            **result,
+            "written_at": datetime.now(timezone.utc).isoformat(),
+            "require_rvc": not args.baseline_only,
+        }
+        meta_path = out.with_suffix(".json")
+        meta_path.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
+        print(f"[meta] {meta_path.relative_to(args.root)}")
+    except Exception as exc:
+        print(f"[meta] skipped ({exc})")
     return 0
 
 

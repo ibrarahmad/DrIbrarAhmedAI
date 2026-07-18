@@ -48,11 +48,13 @@ rvc_webui_root: ""
 
 # Wired by configure_rvc.py → rvc_infer_bridge.py {base_wav} {out_wav} {model_dir}
 # Empty string = Edge TTS only (baseline / dry-run until RVC is built).
-rvc_convert_command: "python /Users/ibrar/app/DrIbrarAhmedAI/rvc-voice-cloning/rvc_infer_bridge.py {base_wav} {out_wav} {model_dir}"
+rvc_convert_command: "python3 /Users/ibrar/app/DrIbrarAhmedAI/rvc-voice-cloning/rvc_infer_bridge.py {base_wav} {out_wav} {model_dir}"
 
 rvc_f0method: "rmvpe"
 rvc_device: "cpu"
 
+# Male voices only (Edge TTS + macOS say fallback)
 edge_tts_voice: "en-US-GuyNeural"
 edge_tts_rate: "-5%"
 edge_tts_pitch: "+0Hz"
+say_voice: "Fred"

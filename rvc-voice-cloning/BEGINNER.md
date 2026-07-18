@@ -1,0 +1,117 @@
+# Beginner path — clone YOUR voice (macOS)
+
+Anyone who watches the full video can finish this. Free local open RVC.
+Follow **one step at a time**. After every step run:
+
+```bash
+python next_step.py
+```
+
+It tells you the **next** command only.
+
+---
+
+## Goal
+
+1. Record **your** voice (10+ minutes clean speech)
+2. Train a local RVC model in WebUI
+3. Generate new text in **your** voice
+4. Play it
+
+---
+
+## Step 0 — one-time tools
+
+```bash
+# Homebrew required on a clean Mac: https://brew.sh
+brew install ffmpeg git
+python3 --version    # need 3.10 or 3.11 (not 3.9, not 3.12+)
+# If python is too old/new:
+#   brew install python@3.11
+#   python3.11 -m venv .venv
+```
+
+---
+
+## Step 1 — companion + official RVC
+
+```bash
+git clone https://github.com/ibrarahmad/DrIbrarAhmedAI
+cd DrIbrarAhmedAI/rvc-voice-cloning
+python3 -m venv .venv
+source .venv/bin/activate
+bash setup_rvc.sh
+python configure_rvc.py --prefer-library
+python next_step.py
+```
+
+---
+
+## Step 2 — record
+
+Need **10+ minutes** total. Quiet room. Same mic.
+One 20-second take is not enough.
+
+**Primary (recommended):** repository recorder — saves WAV into `data/raw/`.
+
+```bash
+python open_recorder.py
+# Save WAV files into data/raw/
+python next_step.py
+```
+
+**Optional:** QuickTime Player often saves `.m4a`. Convert before prepare:
+
+```bash
+ffmpeg -i recording.m4a -ac 1 -ar 40000 data/raw/my_voice_01.wav
+```
+
+The pipeline expects WAV. Do not leave files as m4a.
+
+---
+
+## Step 3 — prepare
+
+```bash
+python prepare.py --input data/raw --speaker demo
+python analyze.py
+python next_step.py
+```
+
+---
+
+## Step 4 — train (WebUI) — do not skip
+
+```bash
+python train_prep.py
+# Follow every field in docs/TRAIN_WEBUI.md
+# Launch:
+#   cd ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI
+#   python infer-web.py
+# Browser: http://localhost:7865
+# Copy .pth + .index → models/rvc/
+python configure_rvc.py --check
+# Regenerate with YOUR weights (required):
+python infer.py --text-file scripts/clone_prove.txt --out output/clone_prove.wav
+python next_step.py
+```
+
+When check says **weights ready**, and infer wrote a **new** `output/clone_prove.wav`, continue.
+
+---
+
+## Step 5 — hear your clone
+
+```bash
+python play_clone.py --wav output/clone_prove.wav --label "PLAY CLONE"
+# Optional visual proof (3–5s) — not a replacement for the scripted path:
+# open -a "QuickTime Player" output/clone_prove.wav
+```
+
+Comment **FREECLONE** on the video when you hear yourself.
+
+---
+
+## If something breaks
+
+Open `docs/TROUBLESHOOT.md` or run `python next_step.py` again.

@@ -64,7 +64,7 @@ def main() -> int:
         cwd=root,
     )
 
-    prove_out = root / "output" / "clone_prove.wav"
+    prove_out = root / "output" / "smoke_baseline.wav"
     _run(
         [
             py,
@@ -78,8 +78,8 @@ def main() -> int:
         cwd=root,
     )
     if not prove_out.is_file():
-        raise SystemExit("FAIL: infer did not write output/clone_prove.wav")
-    print(f"[ok] infer wrote {prove_out.relative_to(root)}")
+        raise SystemExit("FAIL: infer did not write output/smoke_baseline.wav")
+    print(f"[ok] baseline smoke wrote {prove_out.relative_to(root)} (NOT a real clone)")
 
     _run(
         [
@@ -126,6 +126,7 @@ def main() -> int:
             "train in WebUI, copy speaker.pth + .index → models/rvc/",
             "python infer.py --text-file scripts/clone_prove.txt --out output/clone_prove.wav",
             "python play_clone.py --wav output/clone_prove.wav --label 'PLAY CLONE'",
+            "python next_step.py  # must say fresh + RVC",
         ],
     }
     write_json(root / "output" / "smoke_test.json", payload)

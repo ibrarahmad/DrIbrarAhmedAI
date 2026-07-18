@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate dataset and print external RVC training steps (no fake training)."""
+"""Validate dataset and print exact WebUI training steps for beginners."""
 from __future__ import annotations
 
 import argparse
@@ -11,16 +11,42 @@ from _lib import ROOT, find_rvc_weights, load_config, read_metadata, write_json
 
 
 RVC_STEPS = """
-# External RVC train (WebUI or library) - run outside this folder
-# Upstream: https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
-# WebUI:    https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI
+# TRAIN IN WEBUI (beginners — do every line)
+# Full guide: docs/TRAIN_WEBUI.md
 
-1. preprocess  - resample/slice clips → 40k mono
-2. extract F0  - rmvpe (recommended)
-3. extract HuBERT features → 3_feature768 (v2)
-4. train       - G/D from pretrained_v2 (~100-200 epochs)
-5. build index - FAISS .index from training features
-6. export      - copy best G_*.pth + .index → models/rvc/
+cd ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI
+python infer-web.py
+# Browser → http://localhost:7865 → Train tab
+
+Exact fields:
+  Experiment name:  myvoice
+  Dataset folder:   ~/DrIbrarAhmedAI/rvc-voice-cloning/data/segments/demo
+  Sample rate:      40k
+  F0 method:        rmvpe
+  Device:           cpu          # Mac
+  Epochs:           200
+  Save every:       25
+  Batch size:       4            # use 2 if RAM low
+  Version:          v2
+  Pretrained G:     assets/pretrained_v2/f0G40k.pth
+  Pretrained D:     assets/pretrained_v2/f0D40k.pth
+
+Click IN ORDER:
+  1) Preprocess / process dataset
+  2) Extract pitch + features
+  3) Train model
+  4) Build / train feature index
+
+Copy weights into companion:
+  cp assets/weights/myvoice.pth  ~/DrIbrarAhmedAI/rvc-voice-cloning/models/rvc/speaker.pth
+  cp logs/myvoice/*.index        ~/DrIbrarAhmedAI/rvc-voice-cloning/models/rvc/
+
+cd ~/DrIbrarAhmedAI/rvc-voice-cloning
+python configure_rvc.py --check
+# REQUIRED: regenerate with YOUR weights (do not reuse demo WAV)
+python infer.py --text-file scripts/clone_prove.txt --out output/clone_prove.wav
+python play_clone.py --wav output/clone_prove.wav
+python next_step.py
 """
 
 
@@ -28,12 +54,25 @@ def train_prep(root: Path) -> Path:
     cfg = load_config(root)
     speaker = cfg.get("speaker_name") or "demo"
     seg_dir = root / "data" / "segments" / speaker
-    meta = read_metadata(seg_dir / "metadata.csv")
+    meta_path = seg_dir / "metadata.csv"
+    if not meta_path.is_file():
+        raise SystemExit(
+            "No metadata yet. Run:\n"
+            "  python prepare.py --input data/raw --speaker demo\n"
+            "Need 10+ minutes clean speech in data/raw/ first."
+        )
+    meta = read_metadata(meta_path)
     clean = [r for r in meta if (r.get("label") or "").lower() == "clean"]
     if not clean:
         raise SystemExit("No clean segments - run prepare.py / clean your data first.")
 
     total_sec = sum(float(r.get("duration_sec") or 0) for r in clean)
+    if total_sec < 60:
+        print(
+            f"WARNING: only ~{total_sec:.0f}s labeled clean. "
+            "Aim for 10+ minutes (600s+) of clean speech for a usable clone."
+        )
+
     manifest = {
         "speaker": speaker,
         "created_at": datetime.now(timezone.utc).isoformat(),
@@ -42,25 +81,30 @@ def train_prep(root: Path) -> Path:
         "clean_clips": len(clean),
         "clean_seconds": round(total_sec, 2),
         "rvc_steps": [
+            "launch_webui_infer_web_py",
+            "fill_train_fields",
             "preprocess",
             "extract_f0_rmvpe",
-            "extract_hubert",
             "train",
             "build_index",
-            "export_to_models_rvc",
+            "copy_to_models_rvc",
         ],
-        "upstream": "https://github.com/RVC-Project/Retrieval-based-Voice-Conversion",
+        "guide": "docs/TRAIN_WEBUI.md",
+        "upstream": "https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI",
     }
     out = root / "models" / "training_manifest.json"
     write_json(out, manifest)
     print(f"wrote {out.relative_to(root)}")
     print(f"clean_clips={len(clean)} clean_seconds={total_sec:.1f}")
+    print(f"dataset_folder_for_webui={seg_dir}")
     print(RVC_STEPS.strip())
     pth, index = find_rvc_weights(root / "models" / "rvc")
     if pth:
         print(f"weights present: {pth.name}" + (f" + {index.name}" if index else ""))
+        print("NEXT: python infer.py --text-file scripts/clone_prove.txt --out output/clone_prove.wav")
     else:
-        print("weights: MISSING - place speaker.pth (+ .index) in models/rvc/ after train")
+        print("weights: MISSING - finish WebUI train, then copy into models/rvc/")
+        print("NEXT: follow the WebUI block above, then python next_step.py")
     return out
 
 

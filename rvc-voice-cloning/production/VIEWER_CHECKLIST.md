@@ -1,23 +1,27 @@
-# TONIGHT - official RVC library + your clone (no ElevenLabs)
-[ ] 1. git clone https://github.com/ibrarahmad/DrIbrarAhmedAI
-[ ] 2. cd rvc-voice-cloning && python3 -m venv .venv && pip install -r requirements.txt
-[ ] 3. bash setup_rvc.sh
-      → pip install git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
-      → rvc init && rvc dlmodel  (+ optional WebUI for train)
-[ ] 4. python configure_rvc.py --prefer-library
-[ ] 5. python configure_rvc.py --check
-[ ] 6. python open_recorder.py  → Record → Save WAV → move into data/raw/
-[ ] 7. python play_clone.py --wav data/raw/my_voice_01.wav   # hear your recording
-[ ] 8. python record_voice.py --check
-[ ] 9. python prepare.py --input data/raw && python analyze.py
-[ ] 10. consent.yaml → attested: true  (own voice only)
-[ ] 11. python train_prep.py
-[ ] 12. Train in RVC WebUI → copy speaker.pth + .index → models/rvc/
-[ ] 13. python infer.py --text-file scripts/clone_prove.txt --out output/clone_prove.wav
-[ ] 14. python play_clone.py --wav output/clone_prove.wav   # clone says DIFFERENT text
-[ ] 15. Hear your clone on new words. Comment FREECLONE on the video.
+# Viewer checklist — finish the clone (macOS)
 
-pip install official RVC → configure → record → train → demo_complete. Free. Local.
-See docs/RVC_SETUP.md
+Follow the video. After every beat run:
+
+```bash
+python next_step.py
+```
+
+[ ] 1. `brew install ffmpeg`
+[ ] 2. Clone repo · `python3 -m venv .venv` · `source .venv/bin/activate`
+[ ] 3. `bash setup_rvc.sh` · `python configure_rvc.py --prefer-library`
+[ ] 4. Record **10+ minutes** clean speech → `data/raw/` (`python open_recorder.py`)
+[ ] 5. `python prepare.py --input data/raw --speaker demo` · `python analyze.py`
+[ ] 6. `python train_prep.py` · open `docs/TRAIN_WEBUI.md`
+[ ] 7. `cd ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI` · `python infer-web.py`
+[ ] 8. Browser `http://localhost:7865` · Train tab · exact fields in TRAIN_WEBUI.md
+[ ] 9. Preprocess → extract → train → build index
+[ ] 10. Copy `myvoice.pth` + `.index` → `models/rvc/`
+[ ] 11. `python configure_rvc.py --check` → **weights ready**
+[ ] 12. `python infer.py --text-file scripts/clone_prove.txt --out output/clone_prove.wav`  # YOUR weights
+[ ] 13. `python play_clone.py --wav output/clone_prove.wav`
+[ ] 14. Comment **FREECLONE** on the video
+
+Start file: `BEGINNER.md`  
+Fixes: `docs/TROUBLESHOOT.md`
 
 github.com/ibrarahmad/DrIbrarAhmedAI/rvc-voice-cloning
