@@ -10,7 +10,7 @@ Upstream: https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI
 cd ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI
 ```
 
-`setup_rvc.sh` clones it next to the companion (`DrIbrarAhmedAI/rvc-voice-cloning` → sibling `Retrieval-based-Voice-Conversion-WebUI`) and installs WebUI `requirements.txt` plus `tools/download_models.py`.
+`setup_rvc.sh` (macOS) / `setup_rvc.ps1` (Windows) clones it next to the companion (`DrIbrarAhmedAI/rvc-voice-cloning` → sibling `Retrieval-based-Voice-Conversion-WebUI`) and installs WebUI `requirements.txt` plus `tools/download_models.py`.
 
 ## Before you train
 

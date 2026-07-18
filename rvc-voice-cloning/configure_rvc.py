@@ -67,19 +67,24 @@ def write_config(
     index = _first_index(model_dir)
 
     # Always wire the bridge - it prefers library API/CLI, then WebUI.
-    convert_cmd = (
-        f'"python3 {root / "rvc_infer_bridge.py"} '
-        f'{{base_wav}} {{out_wav}} {{model_dir}}"'
+    # Use sys.executable (posix-style) so Windows venvs do not need a python3 shim.
+    py = Path(sys.executable).resolve().as_posix()
+    bridge = (root / "rvc_infer_bridge.py").resolve().as_posix()
+    convert_cmd = f'"{py} {bridge} {{base_wav}} {{out_wav}} {{model_dir}}"'
+    webui_root = (
+        f'"{webui.resolve().as_posix()}"' if webui and webui.is_dir() else '""'
     )
-    webui_root = f'"{webui}"' if webui and webui.is_dir() else '""'
     backend = "library" if prefer_library or _library_installed() else "webui"
     notes: list[str] = []
+    setup_hint = (
+        ".\\setup_rvc.ps1" if sys.platform.startswith("win") else "bash setup_rvc.sh"
+    )
 
     if _library_installed():
         notes.append("official RVC library detected (pip / rvc CLI)")
     else:
         notes.append(
-            "RVC library not importable yet - run bash setup_rvc.sh "
+            f"RVC library not importable yet - run {setup_hint} "
             "(pip install git+https://github.com/RVC-Project/...)"
         )
 
@@ -129,9 +134,18 @@ def check(root: Path) -> int:
     # Must match setup_rvc.sh / video Slide 4
     webui_pin = "c1e005f0e226a3c2a10adfc8a9be03a6944506d0"
 
+    setup_hint = (
+        ".\\setup_rvc.ps1" if sys.platform.startswith("win") else "bash setup_rvc.sh"
+    )
+    ffmpeg_hint = (
+        "NO - winget install Gyan.FFmpeg"
+        if sys.platform.startswith("win")
+        else "NO - brew install ffmpeg"
+    )
+
     print("CONFIG CHECK")
-    print(f"  ffmpeg:             {'yes' if which('ffmpeg') else 'NO - brew install ffmpeg'}")
-    print(f"  rvc library:        {'yes' if lib_ok else 'NO - bash setup_rvc.sh'}")
+    print(f"  ffmpeg:             {'yes' if which('ffmpeg') else ffmpeg_hint}")
+    print(f"  rvc library:        {'yes' if lib_ok else f'NO - {setup_hint}'}")
     print(f"  rvc CLI:            {which('rvc') or 'not on PATH'}")
     print(f"  rvc_backend:        {backend}")
     print(f"  rvc_webui_root:     {webui if webui.as_posix() not in {'', '.'} else 'NOT SET (optional for train)'}")
@@ -153,7 +167,10 @@ def check(root: Path) -> int:
                 head = ""
         if head:
             ok = head == webui_pin
-            print(f"  webui pin:          {head[:12]}{' OK' if ok else ' MISMATCH — re-run bash setup_rvc.sh'}")
+            print(
+                f"  webui pin:          {head[:12]}"
+                f"{' OK' if ok else f' MISMATCH — re-run {setup_hint}'}"
+            )
             if not ok:
                 print(f"  expected pin:       {webui_pin[:12]}")
         req = webui / "requirements.txt"
@@ -172,7 +189,7 @@ def check(root: Path) -> int:
         print("  STATUS: PARTIAL - run: python configure_rvc.py --prefer-library")
         return 1
     if not lib_ok and not (webui.is_dir() and _find_infer_cli(webui)):
-        print("  STATUS: CONFIGURED - next: bash setup_rvc.sh (install RVC library)")
+        print(f"  STATUS: CONFIGURED - next: {setup_hint} (install RVC library)")
         print("           then train → copy .pth → models/rvc/")
         return 0
     if not pth:
@@ -229,8 +246,10 @@ def main() -> int:
     prefer_library = not args.prefer_webui
     # Always write config - library may be installed via pip without local clone.
     if webui is None and rvc_lib is None and not _library_installed():
+        from _lib import setup_script_hint
+
         print("RVC not found yet - writing library-first convert command anyway.")
-        print("Next: bash setup_rvc.sh")
+        print(f"Next: {setup_script_hint()}")
         print("  https://github.com/RVC-Project/Retrieval-based-Voice-Conversion")
 
     write_config(

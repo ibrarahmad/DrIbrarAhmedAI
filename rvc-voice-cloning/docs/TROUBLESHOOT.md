@@ -1,12 +1,18 @@
-# Troubleshoot (macOS companion)
+# Troubleshoot (macOS + Windows companion)
 
 **WebUI path (always):**
 
 ```bash
+# macOS / bash
 cd ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI
 ```
 
-`setup_rvc.sh` pins WebUI to `c1e005f0e226…` and **fails hard** if clone / pip / `download_models` break.
+```powershell
+# Windows PowerShell
+cd "$HOME\DrIbrarAhmedAI\Retrieval-based-Voice-Conversion-WebUI"
+```
+
+`setup_rvc.sh` / `setup_rvc.ps1` pin WebUI to `c1e005f0e226…` and **fail hard** if clone / pip / `download_models` break.
 
 ## Clean Mac first-boot fails
 
@@ -18,15 +24,33 @@ cd ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI
 | Apple Silicon torch / Gradio errors | Stay on **cpu** in Train tab; batch size `2` |
 | WebUI pin checkout failed | Re-run `bash setup_rvc.sh` with network; see `docs/RVC_SETUP.md` |
 
+## Clean Windows first-boot fails
+
+| Symptom | Fix |
+|--------|-----|
+| `FAIL: Activate the companion venv` | `python -m venv .venv` then `.\.venv\Scripts\Activate.ps1` |
+| Scripts disabled | `Set-ExecutionPolicy -Scope Process Bypass` then `.\setup_rvc.ps1` |
+| `ffmpeg` / `git` missing | `winget install Gyan.FFmpeg` / `winget install Git.Git` (or re-run `.\setup_rvc.ps1`) |
+| `FAIL: Need Python 3.10–3.11` | Install Python 3.11 from python.org (Add to PATH) → new venv |
+| WebUI pin checkout failed | Re-run `.\setup_rvc.ps1` with network; see `docs/RVC_SETUP.md` |
+
 ## `rvc: command not found`
 
 ```bash
+# macOS
 cd ~/DrIbrarAhmedAI/rvc-voice-cloning
 source .venv/bin/activate
 python -m rvc.wrapper.cli.cli --help
 ```
 
-If that fails, re-run `bash setup_rvc.sh` with the venv active.
+```powershell
+# Windows
+cd $HOME\DrIbrarAhmedAI\rvc-voice-cloning
+.\.venv\Scripts\Activate.ps1
+python -m rvc.wrapper.cli.cli --help
+```
+
+If that fails, re-run `bash setup_rvc.sh` or `.\setup_rvc.ps1` with the venv active.
 
 ## Missing `.pth` / convert still fails
 
@@ -50,7 +74,14 @@ If `next_step.py` says the prove WAV is older than `.pth`, re-run infer.
 ## Missing FFmpeg
 
 ```bash
+# macOS
 brew install ffmpeg
+ffmpeg -version
+```
+
+```powershell
+# Windows
+winget install Gyan.FFmpeg
 ffmpeg -version
 ```
 

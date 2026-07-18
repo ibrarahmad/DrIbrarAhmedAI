@@ -2,7 +2,8 @@
 #
 # REQUIRED: build + configure upstream RVC first
 #   https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
-#   bash setup_rvc.sh
+#   macOS:   bash setup_rvc.sh
+#   Windows: .\setup_rvc.ps1
 #   python configure_rvc.py --prefer-library
 #   python configure_rvc.py --check
 #   python demo_complete.py

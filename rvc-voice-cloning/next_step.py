@@ -10,7 +10,14 @@ import argparse
 import sys
 from pathlib import Path
 
-from _lib import ROOT, find_rvc_weights, load_config, which
+from _lib import (
+    ROOT,
+    find_rvc_weights,
+    load_config,
+    setup_script_hint,
+    venv_activate_lines,
+    which,
+)
 
 
 AUDIO_EXTS = {".wav", ".mp3", ".flac", ".m4a"}
@@ -49,11 +56,16 @@ def diagnose(root: Path) -> tuple[str, list[str]]:
 
     # 1 ffmpeg
     if not which("ffmpeg"):
+        ffmpeg_cmd = (
+            "winget install Gyan.FFmpeg"
+            if sys.platform.startswith("win")
+            else "brew install ffmpeg"
+        )
         lines += [
             "BLOCKED: FFmpeg missing",
             "",
             "NEXT (copy-paste):",
-            "  brew install ffmpeg",
+            f"  {ffmpeg_cmd}",
             "  ffmpeg -version",
             "",
             "Then run: python next_step.py",
@@ -64,8 +76,7 @@ def diagnose(root: Path) -> tuple[str, list[str]]:
     if sys.prefix == getattr(sys, "base_prefix", sys.prefix):
         lines += [
             "TIP: activate the project venv first:",
-            "  cd ~/DrIbrarAhmedAI/rvc-voice-cloning",
-            "  source .venv/bin/activate",
+            *venv_activate_lines(),
             "",
         ]
 
@@ -75,7 +86,7 @@ def diagnose(root: Path) -> tuple[str, list[str]]:
             "BLOCKED: official RVC library not installed",
             "",
             "NEXT (copy-paste):",
-            "  bash setup_rvc.sh",
+            f"  {setup_script_hint()}",
             "  python configure_rvc.py --prefer-library",
             "  python next_step.py",
             "",
@@ -161,8 +172,20 @@ def diagnose(root: Path) -> tuple[str, list[str]]:
             "  # or: python train_prep.py",
             "",
             "After train, copy weights:",
-            f"  cp {webui}/assets/weights/myvoice.pth  {root}/models/rvc/speaker.pth",
-            f"  cp {webui}/logs/myvoice/*.index       {root}/models/rvc/",
+        ]
+        if sys.platform.startswith("win"):
+            lines += [
+                f'  Copy-Item "{webui}\\assets\\weights\\myvoice.pth" `',
+                f'    "{root}\\models\\rvc\\speaker.pth"',
+                f'  Copy-Item "{webui}\\logs\\myvoice\\*.index" `',
+                f'    "{root}\\models\\rvc\\"',
+            ]
+        else:
+            lines += [
+                f"  cp {webui}/assets/weights/myvoice.pth  {root}/models/rvc/speaker.pth",
+                f"  cp {webui}/logs/myvoice/*.index       {root}/models/rvc/",
+            ]
+        lines += [
             "",
             "Then regenerate with YOUR weights (required):",
             f"  cd {root}",

@@ -12,6 +12,25 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent
 
 
+def setup_script_hint() -> str:
+    """Platform setup command shown to beginners (matches video Slide 4)."""
+    if sys.platform.startswith("win"):
+        return ".\\setup_rvc.ps1"
+    return "bash setup_rvc.sh"
+
+
+def venv_activate_lines() -> list[str]:
+    if sys.platform.startswith("win"):
+        return [
+            "  cd $HOME\\DrIbrarAhmedAI\\rvc-voice-cloning",
+            "  .\\.venv\\Scripts\\Activate.ps1",
+        ]
+    return [
+        "  cd ~/DrIbrarAhmedAI/rvc-voice-cloning",
+        "  source .venv/bin/activate",
+    ]
+
+
 def load_yaml(path: Path) -> dict[str, Any]:
     try:
         import yaml

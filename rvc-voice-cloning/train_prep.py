@@ -10,7 +10,49 @@ from pathlib import Path
 from _lib import ROOT, find_rvc_weights, load_config, read_metadata, write_json
 
 
-RVC_STEPS = """
+def _rvc_steps() -> str:
+    if sys.platform.startswith("win"):
+        return r"""
+# TRAIN IN WEBUI (beginners — do every line)
+# Full guide: docs/TRAIN_WEBUI.md
+
+cd "$HOME\DrIbrarAhmedAI\Retrieval-based-Voice-Conversion-WebUI"
+python infer-web.py
+# Browser → http://localhost:7865 → Train tab
+
+Exact fields:
+  Experiment name:  myvoice
+  Dataset folder:   $HOME\DrIbrarAhmedAI\rvc-voice-cloning\data\segments\demo
+  Sample rate:      40k
+  F0 method:        rmvpe
+  Device:           cpu          # Windows (cuda if you have NVIDIA + CUDA torch)
+  Epochs:           200
+  Save every:       25
+  Batch size:       4            # use 2 if RAM low
+  Version:          v2
+  Pretrained G:     assets/pretrained_v2/f0G40k.pth
+  Pretrained D:     assets/pretrained_v2/f0D40k.pth
+
+Click IN ORDER:
+  1) Preprocess / process dataset
+  2) Extract pitch + features
+  3) Train model
+  4) Build / train feature index
+
+Copy weights into companion:
+  Copy-Item "assets\weights\myvoice.pth" `
+    "..\rvc-voice-cloning\models\rvc\speaker.pth"
+  Copy-Item "logs\myvoice\*.index" `
+    "..\rvc-voice-cloning\models\rvc\"
+
+cd "$HOME\DrIbrarAhmedAI\rvc-voice-cloning"
+python configure_rvc.py --check
+# REQUIRED: regenerate with YOUR weights (do not reuse demo WAV)
+python infer.py --text-file scripts\clone_prove.txt --out output\clone_prove.wav
+python play_clone.py --wav output\clone_prove.wav
+python next_step.py
+"""
+    return """
 # TRAIN IN WEBUI (beginners — do every line)
 # Full guide: docs/TRAIN_WEBUI.md
 
@@ -97,7 +139,7 @@ def train_prep(root: Path) -> Path:
     print(f"wrote {out.relative_to(root)}")
     print(f"clean_clips={len(clean)} clean_seconds={total_sec:.1f}")
     print(f"dataset_folder_for_webui={seg_dir}")
-    print(RVC_STEPS.strip())
+    print(_rvc_steps().strip())
     pth, index = find_rvc_weights(root / "models" / "rvc")
     if pth:
         print(f"weights present: {pth.name}" + (f" + {index.name}" if index else ""))

@@ -43,7 +43,9 @@ def _rvc_library_ok() -> tuple[bool, str]:
         return True, "import rvc OK"
     if which("rvc"):
         return True, f"rvc CLI at {which('rvc')}"
-    return False, "MISSING - run: bash setup_rvc.sh"
+    from _lib import setup_script_hint
+
+    return False, f"MISSING - run: {setup_script_hint()}"
 
 
 def _raw_wav_count(root: Path) -> int:
@@ -78,8 +80,14 @@ def run_demo(
     ok, msg = _rvc_library_ok()
     print(f"[lib] {msg}")
     if not ok:
-        print("HINT: bash setup_rvc.sh")
-        print("      pip install git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git@develop")
+        from _lib import setup_script_hint
+
+        print(f"HINT: {setup_script_hint()}")
+        print(
+            "      pip install "
+            "git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git"
+            "@7b284a634667c34103eaaeed972b48ccdb4b893e"
+        )
         if not baseline_only:
             return 1
 

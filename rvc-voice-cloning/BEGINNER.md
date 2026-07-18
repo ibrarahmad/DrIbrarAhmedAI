@@ -1,4 +1,4 @@
-# Beginner path — clone YOUR voice (macOS)
+# Beginner path — clone YOUR voice (macOS + Windows)
 
 Anyone who watches the full video can finish this. Free local open RVC.
 Follow **one step at a time**. After every step run:
@@ -6,6 +6,8 @@ Follow **one step at a time**. After every step run:
 ```bash
 python next_step.py
 ```
+
+**Windows:** use PowerShell and `.\setup_rvc.ps1` (see Step 0 / Step 1 Windows blocks). Do **not** run `bash setup_rvc.sh` on Windows — that script requires Homebrew.
 
 It tells you the **next** command only.
 
@@ -22,6 +24,8 @@ It tells you the **next** command only.
 
 ## Step 0 — one-time tools
 
+**macOS**
+
 ```bash
 # Homebrew required on a clean Mac: https://brew.sh
 brew install ffmpeg git
@@ -31,9 +35,20 @@ python3 --version    # need 3.10 or 3.11 (not 3.9, not 3.12+)
 #   python3.11 -m venv .venv
 ```
 
+**Windows (PowerShell)**
+
+```powershell
+winget install Gyan.FFmpeg
+winget install Git.Git
+python --version    # need 3.10 or 3.11 (not 3.9, not 3.12+)
+# If needed: install Python 3.11 from python.org (Add to PATH)
+```
+
 ---
 
 ## Step 1 — companion + official RVC
+
+**macOS**
 
 ```bash
 git clone https://github.com/ibrarahmad/DrIbrarAhmedAI
@@ -41,6 +56,19 @@ cd DrIbrarAhmedAI/rvc-voice-cloning
 python3 -m venv .venv
 source .venv/bin/activate
 bash setup_rvc.sh
+python configure_rvc.py --prefer-library
+python next_step.py
+```
+
+**Windows (PowerShell)**
+
+```powershell
+git clone https://github.com/ibrarahmad/DrIbrarAhmedAI
+cd DrIbrarAhmedAI\rvc-voice-cloning
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+Set-ExecutionPolicy -Scope Process Bypass
+.\setup_rvc.ps1
 python configure_rvc.py --prefer-library
 python next_step.py
 ```
@@ -85,11 +113,14 @@ python next_step.py
 ```bash
 python train_prep.py
 # Follow every field in docs/TRAIN_WEBUI.md
-# Launch:
+# Launch (macOS):
 #   cd ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI
 #   python infer-web.py
+# Launch (Windows PowerShell):
+#   cd "$HOME\DrIbrarAhmedAI\Retrieval-based-Voice-Conversion-WebUI"
+#   python infer-web.py
 # Browser: http://localhost:7865
-# Copy .pth + .index → models/rvc/
+# Copy .pth + .index → models/rvc/  (Windows: Copy-Item — see train_prep.py)
 python configure_rvc.py --check
 # Regenerate with YOUR weights (required):
 python infer.py --text-file scripts/clone_prove.txt --out output/clone_prove.wav

@@ -22,7 +22,10 @@ WebUI (train UI) is a **different repo**. `setup_rvc.sh` pins it to:
 c1e005f0e226a3c2a10adfc8a9be03a6944506d0
 ```
 
-Do not float on WebUI `HEAD`. Prefer `bash setup_rvc.sh` (venv required; hard-fails on clone/pip/models).
+Do not float on WebUI `HEAD`. Prefer the platform setup script (venv required; hard-fails on clone/pip/models):
+
+- macOS: `bash setup_rvc.sh`
+- Windows: `Set-ExecutionPolicy -Scope Process Bypass` then `.\setup_rvc.ps1`
 
 # Working directory = rvc-voice-cloning/
 rvc init          # creates assets/ + .env
@@ -50,7 +53,7 @@ wavfile.write("out.wav", tgt_sr, audio_opt)
 
 ## One-shot setup (companion)
 
-From `rvc-voice-cloning/`:
+**macOS** — from `rvc-voice-cloning/`:
 
 ```bash
 bash setup_rvc.sh
@@ -59,15 +62,26 @@ python configure_rvc.py --check
 python demo_complete.py   # full educational demo
 ```
 
-## What setup_rvc.sh does (hard-fail — matches video Slide 4)
+**Windows** — from `rvc-voice-cloning\` (venv active):
 
-1. Require active `.venv` + Homebrew + FFmpeg + Python **3.10–3.11**
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\setup_rvc.ps1
+python configure_rvc.py --prefer-library
+python configure_rvc.py --check
+python demo_complete.py
+```
+
+## What setup_rvc.sh / setup_rvc.ps1 do (hard-fail — matches video Slide 4)
+
+1. Require active `.venv` + Git + FFmpeg + Python **3.10–3.11**  
+   (macOS: Homebrew; Windows: winget `Git.Git` / `Gyan.FFmpeg`)
 2. `pip install` companion `requirements.txt`
-3. Prefetch `av==18` binary wheel (FFmpeg 8 Macs), then install **pinned** RVC `@7b284a634667…` with `--no-deps` + runtime deps (never `develop` / HEAD)
+3. Prefetch `av==18` binary wheel (FFmpeg 8), then install **pinned** RVC `@7b284a634667…` with `--no-deps` + runtime deps (never `develop` / HEAD)
 4. `rvc init` / `rvc dlmodel` for companion convert assets
 5. Clone WebUI next to this folder and **detach to** `c1e005f0e226…`
 6. `pip install -r` WebUI `requirements.txt` + `python tools/download_models.py`
-7. `configure_rvc.py --prefer-library` → wires `rvc_infer_bridge.py`
+7. `configure_rvc.py --prefer-library` → wires `rvc_infer_bridge.py` with `sys.executable` (Windows-safe)
 
 Success lines you should see:
 

@@ -172,10 +172,14 @@ def convert(base_wav: Path, out_wav: Path, model_dir: Path | None = None) -> str
         if ok:
             return backend
 
+    from _lib import setup_script_hint
+
     raise SystemExit(
         "RVC convert failed on all backends.\n"
-        "1) pip install git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git@develop\n"
-        "2) bash setup_rvc.sh && python configure_rvc.py --check\n"
+        "1) pip install "
+        "git+https://github.com/RVC-Project/Retrieval-based-Voice-Conversion.git"
+        "@7b284a634667c34103eaaeed972b48ccdb4b893e\n"
+        f"2) {setup_script_hint()} && python configure_rvc.py --check\n"
         "3) Ensure models/rvc/*.pth exists"
     )
 

@@ -1,6 +1,6 @@
 <div align="center">
 
-# Clone Your Voice Free (macOS)
+# Clone Your Voice Free (macOS + Windows)
 
 ### Beginner path: record → train WebUI → hear YOUR clone · free local RVC
 
@@ -51,6 +51,25 @@ Pinned RVC commit is inside `setup_rvc.sh` (do not float on `develop`).
 
 ---
 
+## Quick install (Windows · PowerShell)
+
+```powershell
+winget install Gyan.FFmpeg
+
+git clone https://github.com/ibrarahmad/DrIbrarAhmedAI
+cd DrIbrarAhmedAI\rvc-voice-cloning
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+Set-ExecutionPolicy -Scope Process Bypass
+.\setup_rvc.ps1
+python configure_rvc.py --prefer-library
+python next_step.py
+```
+
+Pinned RVC + WebUI commits are inside `setup_rvc.ps1` (same pins as macOS; hard-fail on clone/pip/models).
+
+---
+
 ## What success looks like
 
 ```bash
@@ -70,7 +89,8 @@ You hear **new words** in **your** voice. Comment **FREECLONE** on the video.
 | `next_step.py` | Tells you the one next command |
 | `docs/TRAIN_WEBUI.md` | Launch WebUI + every train field + export |
 | `docs/TROUBLESHOOT.md` | Common failures |
-| `setup_rvc.sh` | Install pinned official RVC + WebUI clone |
+| `setup_rvc.sh` | macOS: install pinned official RVC + WebUI |
+| `setup_rvc.ps1` | Windows: same pins via PowerShell + winget |
 | `open_recorder.py` | Record → `data/raw/` |
 | `prepare.py` / `analyze.py` | Clean dataset |
 | `train_prep.py` | Prints exact WebUI steps |

@@ -20,7 +20,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from _lib import ROOT, find_rvc_weights, load_config, which, write_json
+from _lib import ROOT, find_rvc_weights, load_config, setup_script_hint, which, write_json
 
 
 def _run(argv: list[str], *, cwd: Path) -> None:
@@ -121,7 +121,7 @@ def main() -> int:
         "speaker_index": index.name if index else None,
         "rvc_convert_ready": bool(pth and convert and lib),
         "next_for_real_clone": [
-            "bash setup_rvc.sh",
+            setup_script_hint(),
             "set attested: true in consent.yaml (own voice only)",
             "train in WebUI, copy speaker.pth + .index → models/rvc/",
             "python infer.py --text-file scripts/clone_prove.txt --out output/clone_prove.wav",
