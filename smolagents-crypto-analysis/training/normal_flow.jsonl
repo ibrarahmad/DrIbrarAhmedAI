@@ -1,0 +1,4 @@
+{"spread_bps": 4, "liquidity_delta_pct": 1.0, "volume_z": 0.7, "label": "HOLD"}
+{"spread_bps": 6, "liquidity_delta_pct": -2.0, "volume_z": 0.9, "label": "HOLD"}
+{"spread_bps": 5, "liquidity_delta_pct": 0.3, "volume_z": 1.1, "label": "HOLD"}
+{"spread_bps": 24, "liquidity_delta_pct": -3.0, "volume_z": 3.1, "label": "HOLD"}

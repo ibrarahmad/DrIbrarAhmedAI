@@ -52,6 +52,7 @@ No guesswork — what you see on screen is what runs here.
 | **I Let AI Pick My Next Viral YouTube Video** | [`viral-youtube-agent/`](viral-youtube-agent/) | A Python pipeline that scores video ideas from real YouTube signals (title velocity + comment demand) and writes a production brief. Runs offline on sample data. |
 | **EP 02 — AI Beat My Hook by 48 Points** | [`hook-agent/`](hook-agent/) | One local command scores 10 video hooks on 3 signals (curiosity / specificity / pattern), rejects below 80, and writes a film-ready brief. No API key. |
 | **Clone Your Voice Free — No ElevenLabs (RVC)** | [`rvc-voice-cloning/`](rvc-voice-cloning/) | Official [RVC library](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion) (`rvc infer`) + `demo_complete.py`. Record → train → play. No ElevenLabs. |
+| **Fine-Tuning smolagents for Real-Time Crypto Analysis** | [`smolagents-crypto-analysis/`](smolagents-crypto-analysis/) | Paper-only telemetry loop: adapted model → CodeAgent tools → safety gate → paper logs. Run `demo_complete.py`. |
 
 > 🆕 More builds added each week — ⭐ star the repo and 🔔 subscribe so you never miss one.
 
@@ -109,13 +110,19 @@ DrIbrarAhmedAI/
 │   ├── scrape/extract/generate/score_*.py
 │   ├── prompts/hook_score.txt← the 3-signal rubric
 │   └── data/ (niche lib + recorded run)  └── output/ (generated brief)
-└── rvc-voice-cloning/        ← "Clone Your Voice Free — No ElevenLabs (RVC)"
-    ├── README.md             ← walkthrough + tonight checklist 1→12
-    ├── record_voice.py       ← capture YOUR voice into data/raw/
-    ├── prepare.py / train_prep.py / infer.py / play_clone.py
-    ├── pipeline.py / quality_gate.py / compare.py
-    ├── consent.yaml / config.yaml
-    └── models/rvc/           ← place your .pth + .index here
+├── rvc-voice-cloning/        ← "Clone Your Voice Free — No ElevenLabs (RVC)"
+│   ├── README.md             ← walkthrough + tonight checklist 1→12
+│   ├── record_voice.py       ← capture YOUR voice into data/raw/
+│   ├── prepare.py / train_prep.py / infer.py / play_clone.py
+│   ├── pipeline.py / quality_gate.py / compare.py
+│   ├── consent.yaml / config.yaml
+│   └── models/rvc/           ← place your .pth + .index here
+└── smolagents-crypto-analysis/ ← "Fine-Tuning smolagents for Real-Time Crypto Analysis"
+    ├── README.md             ← paper-only loop walkthrough
+    ├── demo_complete.py      ← one-command complete demo
+    ├── pipeline/ + tools/ + safety/
+    ├── training/ + models/   ← specialty adapter
+    └── eval/                 ← baseline fail · adapted win · golden
 ```
 
 ---

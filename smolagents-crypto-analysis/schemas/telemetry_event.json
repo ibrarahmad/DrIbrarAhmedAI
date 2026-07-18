@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "telemetry_event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ts", "symbol", "price", "spread_bps", "liquidity_delta_pct", "volume_z", "source"],
+  "properties": {
+    "ts": {"type": "string"},
+    "symbol": {"type": "string"},
+    "price": {"type": "number"},
+    "spread_bps": {"type": "number"},
+    "liquidity_delta_pct": {"type": "number"},
+    "volume_z": {"type": "number"},
+    "source": {"type": "string"}
+  }
+}

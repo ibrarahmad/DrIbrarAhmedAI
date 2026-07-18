@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "action_object",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["signal", "confidence", "reason", "evidence", "allowed_tool"],
+  "properties": {
+    "signal": {"type": "string", "enum": ["HOLD", "REVIEW", "ALERT"]},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "reason": {"type": "string"},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "allowed_tool": {"type": "string", "enum": ["write_paper_signal", "append_review_queue", "none"]}
+  }
+}

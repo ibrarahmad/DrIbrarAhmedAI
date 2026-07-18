@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+logs/*.jsonl
+!logs/.gitkeep
+!logs/fixtures/
+data/train.jsonl
+.DS_Store

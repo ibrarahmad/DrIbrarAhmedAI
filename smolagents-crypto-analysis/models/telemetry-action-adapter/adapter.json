@@ -1,0 +1,10 @@
+{
+  "name": "telemetry-action-adapter",
+  "version": "1.0.0",
+  "review_spread_bps": 25.48,
+  "review_liquidity_delta_pct": -16.95,
+  "hold_volume_z": 2.0,
+  "trained_on": "/Users/ibrar/app/DrIbrarAhmedAI/smolagents-crypto-analysis/data/train.jsonl",
+  "review_rows": 70,
+  "note": "Narrow specialty adapter \u2014 paper-only. Educational. Not financial advice."
+}

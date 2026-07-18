@@ -1,0 +1,9 @@
+{
+  "ts": "2026-07-09T00:00:00Z",
+  "symbol": "SOLUSDT",
+  "price": 187.65,
+  "spread_bps": 31,
+  "liquidity_delta_pct": -18.4,
+  "volume_z": 0.2,
+  "source": "replay"
+}

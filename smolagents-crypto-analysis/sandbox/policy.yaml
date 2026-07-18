@@ -1,0 +1,12 @@
+# sandbox/policy.yaml — paper-only boundary
+allowed:
+  - write_paper_signal
+  - append_review_queue
+  - replay_synthetic_rows
+
+blocked:
+  - exchange_order
+  - signed_request
+  - live_api_keys_in_browser
+
+# model sorts evidence — it does not trade

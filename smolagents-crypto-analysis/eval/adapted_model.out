@@ -1,0 +1,11 @@
+{
+  "signal": "REVIEW",
+  "confidence": 0.81,
+  "reason": "spread widened without volume confirmation",
+  "evidence": [
+    "spread_bps",
+    "liquidity_delta_pct",
+    "volume_z"
+  ],
+  "allowed_tool": "write_paper_signal"
+}
