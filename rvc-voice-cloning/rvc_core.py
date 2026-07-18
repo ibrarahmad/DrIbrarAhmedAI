@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""RVC core retrieval loop -  knobs + convert contract (slides 13-14)."""
+"""RVC core retrieval loop - knobs + convert contract (slides 13-14)."""
 from __future__ import annotations
 
 import subprocess

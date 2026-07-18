@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Summarize segment metadata -  clean vs noisy/reverb."""
+"""Summarize segment metadata - clean vs noisy/reverb."""
 from __future__ import annotations
 
 import argparse

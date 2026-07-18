@@ -1,30 +1,10 @@
 {
-  "purpose": "No ElevenLabs -  open recorder → Save WAV → train → play YOUR clone",
-  "viewer_goal": "Browser mic record → data/raw → train RVC → play clone",
-  "no_paid_api": true,
-  "stage_1_record_voice": {
-    "open": "python open_recorder.py",
-    "ui": "recorder.html",
-    "actions": ["Record", "Stop", "Save WAV", "move into data/raw/"],
-    "check": "python record_voice.py --check",
-    "target": "10+ minutes clean speech",
-    "consent": "own_voice_only"
-  },
-  "stage_2_train": {
-    "prepare": "python prepare.py --input data/raw",
-    "train_prep": "python train_prep.py",
-    "weights": "models/rvc/speaker.pth",
-    "index": "models/rvc/speaker.index",
-    "status": "TRAINED",
-    "cost": "free / local"
-  },
-  "stage_3_play_clone": {
-    "generate": "python infer.py --text-file scripts/sample_line.txt",
-    "play": "python play_clone.py --wav output/narration.wav",
-    "wav": "output/narration.wav",
-    "quality": "PASS"
-  },
-  "tonight": "production/VIEWER_CHECKLIST.md steps 1→12",
-  "gate": "PASS",
-  "live_impersonation": "BLOCKED"
+  "mode": "edge-tts_only",
+  "preset": "clear",
+  "weights": null,
+  "index": null,
+  "out": "output/narration.wav",
+  "export": "output/narration.mp3",
+  "live_impersonation": "BLOCKED",
+  "gate": "PASS"
 }

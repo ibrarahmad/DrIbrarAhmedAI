@@ -1,8 +1,2 @@
 path,duration_sec,rms_dbfs,label
-seg_001.wav,4.2,-18.1,clean
-seg_002.wav,5.8,-17.4,clean
-seg_003.wav,3.1,-19.0,clean
-seg_004.wav,6.4,-16.8,clean
-seg_005.wav,2.9,-22.3,clean
-seg_noisy_01.wav,4.0,-28.5,noisy
-seg_reverb_01.wav,5.1,-20.1,reverb
+seg_001.wav,4.0,-18.0,clean

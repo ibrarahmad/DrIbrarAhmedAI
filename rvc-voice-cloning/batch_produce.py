@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Batch producer -  run multiple scripts, drop short/failed clips (slide 15)."""
+"""Batch producer - run multiple scripts, drop short/failed clips (slide 15)."""
 from __future__ import annotations
 
 import argparse

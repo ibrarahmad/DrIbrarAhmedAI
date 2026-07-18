@@ -14,7 +14,7 @@ def export_audio(root: Path, in_wav: Path, out_dir: Path, basename: str) -> tupl
     cfg = load_config(root)
     ffmpeg = which("ffmpeg")
     if not ffmpeg:
-        raise SystemExit("ffmpeg required -  brew install ffmpeg")
+        raise SystemExit("ffmpeg required - brew install ffmpeg")
     if not in_wav.is_file():
         raise SystemExit(f"Missing input: {in_wav}")
 
@@ -26,11 +26,14 @@ def export_audio(root: Path, in_wav: Path, out_dir: Path, basename: str) -> tupl
     out_wav = out_dir / f"{basename}.wav"
     out_mp3 = out_dir / f"{basename}.mp3"
     filt = f"loudnorm=I={lufs}:TP={tp}:LRA=11"
+    # ffmpeg cannot loudnorm in-place; write temp then replace
+    tmp_wav = out_dir / f".{basename}.loudnorm.tmp.wav"
     subprocess.run(
-        [ffmpeg, "-y", "-i", str(in_wav), "-af", filt, str(out_wav)],
+        [ffmpeg, "-y", "-i", str(in_wav), "-af", filt, str(tmp_wav)],
         check=True,
         capture_output=True,
     )
+    tmp_wav.replace(out_wav)
     print(f"wrote {out_wav.relative_to(root)}")
     subprocess.run(
         [

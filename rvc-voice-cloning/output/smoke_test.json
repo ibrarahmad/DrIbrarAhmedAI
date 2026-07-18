@@ -1,0 +1,18 @@
+{
+  "smoke": "PASS",
+  "ffmpeg": true,
+  "raw": "data/raw/my_voice_01.wav",
+  "prove": "output/clone_prove.wav",
+  "rvc_convert_command": true,
+  "rvc_library": false,
+  "speaker_pth": null,
+  "speaker_index": null,
+  "rvc_convert_ready": false,
+  "next_for_real_clone": [
+    "bash setup_rvc.sh",
+    "set attested: true in consent.yaml (own voice only)",
+    "train in WebUI, copy speaker.pth + .index \u2192 models/rvc/",
+    "python infer.py --text-file scripts/clone_prove.txt --out output/clone_prove.wav",
+    "python play_clone.py --wav output/clone_prove.wav --label 'PLAY CLONE'"
+  ]
+}

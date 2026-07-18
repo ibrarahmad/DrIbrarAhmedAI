@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Golden replay suite -  assert baseline fail, RVC path, consent gate (slide 17)."""
+"""Golden replay suite - assert baseline fail, RVC path, consent gate (slide 17)."""
 from __future__ import annotations
 
 import argparse

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Record helper -  remind viewers how to capture own-voice WAVs into data/raw."""
+"""Record helper - remind viewers how to capture own-voice WAVs into data/raw."""
 from __future__ import annotations
 
 import argparse
@@ -13,12 +13,12 @@ from _lib import ROOT
 GUIDE = """
 # How to record YOUR voice (complete demo)
 
-## Option A -  browser recorder (easiest)
+## Option A - browser recorder (easiest)
   python open_recorder.py
   → Record → Stop → Save WAV
   → Move the downloaded .wav into data/raw/
 
-## Option B -  any app (Voice Memos / Audacity)
+## Option B - any app (Voice Memos / Audacity)
   Export WAV/MP3 into:  data/raw/
   Examples:
      data/raw/take_01.wav
@@ -58,7 +58,7 @@ def main() -> int:
         for p in files[:12]:
             print(f"  {p.name}")
         if not files:
-            print("  (empty -  drop your recordings here)")
+            print("  (empty - drop your recordings here)")
     else:
         print("data/raw is ready. Drop your voice recordings here, then --check.")
     return 0

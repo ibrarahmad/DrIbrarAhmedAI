@@ -91,7 +91,7 @@
     <p class="sub">No ElevenLabs. Record here, save a WAV, drop it in <code>data/raw/</code>, then train your free RVC clone.</p>
 
     <div class="meter" aria-hidden="true"><i id="level"></i></div>
-    <div class="status" id="status">Idle -  allow microphone when prompted.</div>
+    <div class="status" id="status">Idle - allow microphone when prompted.</div>
     <audio id="player" controls hidden></audio>
 
     <div class="row">
@@ -198,7 +198,7 @@
       btnStop.disabled = true;
       const samples = mergeBuffers(chunks);
       if (!samples.length) {
-        setStatus("No audio captured -  try again.");
+        setStatus("No audio captured - try again.");
         return;
       }
       const blob = encodeWav(samples, sampleRate);
@@ -227,7 +227,7 @@
       player.hidden = true;
       btnSave.disabled = true;
       btnReset.disabled = true;
-      setStatus("Idle -  allow microphone when prompted.");
+      setStatus("Idle - allow microphone when prompted.");
     }
 
     btnRec.onclick = () => startRec().catch((err) => setStatus("Mic error: " + err.message));

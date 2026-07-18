@@ -1,4 +1,4 @@
-# Production checklist -  own-voice RVC narration
+# Production checklist - own-voice RVC narration
 
 [ ] consent.yaml attested: true (own recordings only)
 [ ] ≥ ~10 min clean speech; drop noisy/reverb rows

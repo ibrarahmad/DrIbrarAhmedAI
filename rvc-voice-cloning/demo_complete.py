@@ -43,7 +43,7 @@ def _rvc_library_ok() -> tuple[bool, str]:
         return True, "import rvc OK"
     if which("rvc"):
         return True, f"rvc CLI at {which('rvc')}"
-    return False, "MISSING -  run: bash setup_rvc.sh"
+    return False, "MISSING - run: bash setup_rvc.sh"
 
 
 def _raw_wav_count(root: Path) -> int:
@@ -91,7 +91,7 @@ def run_demo(
     )
     if cfg_check.returncode != 0 and not baseline_only:
         print("HINT: python configure_rvc.py --prefer-library")
-        # continue -  convert may still work via bridge after wiring
+        # continue - convert may still work via bridge after wiring
 
     # ── 3. record + PLAY the raw WAV ────────────────────────────
     _banner("3/6  RECORD YOUR VOICE · PLAY RAW WAV")
@@ -110,19 +110,19 @@ def run_demo(
         if not baseline_only:
             return 1
     elif n_raw == 0:
-        print("[record] skipped check -  using existing segments if any")
+        print("[record] skipped check - using existing segments if any")
     if play_audio and raw_wav is not None:
         print(f"[play] RAW recording first → {raw_wav.relative_to(root)}")
         play(raw_wav)
     elif raw_wav is not None:
-        print(f"[play] skipped -  would play {raw_wav.relative_to(root)}")
+        print(f"[play] skipped - would play {raw_wav.relative_to(root)}")
 
     # ── 4. prepare + train reminder ─────────────────────────────
     _banner("4/6  PREPARE + TRAIN")
     if n_raw > 0:
         prepare(root, root / "data" / "raw", speaker)
     else:
-        print("[prepare] no new raw files -  keeping existing segments")
+        print("[prepare] no new raw files - keeping existing segments")
     train_prep(root)
     pth, index = find_rvc_weights(model_dir)
     print(f"[weights] {pth.name if pth else 'MISSING'}  index={index.name if index else 'none'}")

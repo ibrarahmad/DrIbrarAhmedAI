@@ -1,4 +1,4 @@
-# RVC voice cloning companion -  paths relative to this folder
+# RVC voice cloning companion - paths relative to this folder
 #
 # REQUIRED: build + configure upstream RVC first
 #   https://github.com/RVC-Project/Retrieval-based-Voice-Conversion
@@ -48,7 +48,7 @@ rvc_webui_root: ""
 
 # Wired by configure_rvc.py → rvc_infer_bridge.py {base_wav} {out_wav} {model_dir}
 # Empty string = Edge TTS only (baseline / dry-run until RVC is built).
-rvc_convert_command: ""
+rvc_convert_command: "python /Users/ibrar/app/DrIbrarAhmedAI/rvc-voice-cloning/rvc_infer_bridge.py {base_wav} {out_wav} {model_dir}"
 
 rvc_f0method: "rmvpe"
 rvc_device: "cpu"

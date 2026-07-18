@@ -2,7 +2,7 @@
 
 # 🎙️ RVC Voice Cloning
 
-### Train your voice once -  Edge TTS → official RVC library → YouTube narration
+### Train your voice once - Edge TTS → official RVC library → YouTube narration
 
 Companion code for **[@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)**.
 
@@ -44,6 +44,7 @@ Companion code for **[@DrIbrarAhmedAI](https://www.youtube.com/@DrIbrarAhmedAI)*
 | `configure_rvc.py` | Wire `config.yaml` (`--prefer-library`) |
 | `rvc_infer_bridge.py` | Convert via library API → `rvc infer` → WebUI |
 | `demo_complete.py` | Full educational demo (6 stages) |
+| `smoke_test.py` | Prove prepare + play + infer + export work on this Mac |
 | `docs/RVC_SETUP.md` | Full build + configure guide |
 | `.env.example` | Template after `rvc init` / `rvc dlmodel` |
 | `open_recorder.py` / `recorder.html` | Browser mic → Save WAV |
@@ -77,7 +78,10 @@ cd DrIbrarAhmedAI/rvc-voice-cloning
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# REQUIRED -  official RVC library (not ElevenLabs)
+# REQUIRED for YOUR trained clone: official RVC library (not ElevenLabs)
+# First prove the local path works:
+python smoke_test.py
+
 bash setup_rvc.sh
 python configure_rvc.py --prefer-library
 python configure_rvc.py --check
@@ -91,6 +95,7 @@ python demo_complete.py
 ```
 
 Requires **ffmpeg** on `PATH` (`brew install ffmpeg`).
+`python smoke_test.py` must print `SMOKE: PASS`.
 
 ---
 
