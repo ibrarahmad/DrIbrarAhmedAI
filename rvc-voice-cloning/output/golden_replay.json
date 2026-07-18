@@ -1,0 +1,31 @@
+{
+  "passed": 5,
+  "failed": 0,
+  "cases": [
+    {
+      "name": "baseline_tts_only",
+      "ok": true,
+      "detail": "FAIL expected"
+    },
+    {
+      "name": "rvc_with_weights",
+      "ok": true,
+      "detail": "FAIL expected until .pth + convert wired"
+    },
+    {
+      "name": "missing_pth",
+      "ok": true,
+      "detail": "FAIL expected"
+    },
+    {
+      "name": "consent_not_attested",
+      "ok": true,
+      "detail": "gate\u2192FAIL"
+    },
+    {
+      "name": "impersonation_attempt",
+      "ok": true,
+      "detail": "BLOCK"
+    }
+  ]
+}

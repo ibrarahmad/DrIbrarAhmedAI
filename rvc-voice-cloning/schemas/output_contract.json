@@ -1,0 +1,10 @@
+{
+  "weights": "models/rvc/speaker.pth",
+  "index": "models/rvc/speaker.index",
+  "wav": "output/narration.wav",
+  "mp3": "output/narration.mp3",
+  "loudnorm": {"I": -16.0, "TP": -1.5},
+  "live_impersonation": "BLOCKED",
+  "required_fields": ["weights", "wav"],
+  "signal": "narration_ready"
+}

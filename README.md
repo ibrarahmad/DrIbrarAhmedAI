@@ -51,6 +51,7 @@ No guesswork — what you see on screen is what runs here.
 | **OpenClaw Runs a Real Local Tool** | [`postgres-health-agent/`](postgres-health-agent/) | A safe, read-only PostgreSQL health check via a local agent — approval-gated, summarized by local Ollama, delivered to chat. |
 | **I Let AI Pick My Next Viral YouTube Video** | [`viral-youtube-agent/`](viral-youtube-agent/) | A Python pipeline that scores video ideas from real YouTube signals (title velocity + comment demand) and writes a production brief. Runs offline on sample data. |
 | **EP 02 — AI Beat My Hook by 48 Points** | [`hook-agent/`](hook-agent/) | One local command scores 10 video hooks on 3 signals (curiosity / specificity / pattern), rejects below 80, and writes a film-ready brief. No API key. |
+| **Clone Your Voice Free — No ElevenLabs (RVC)** | [`rvc-voice-cloning/`](rvc-voice-cloning/) | Record your voice → train RVC locally → play your clone. Free open-source path — no ElevenLabs. Follow numbered steps 1→12. |
 
 > 🆕 More builds added each week — ⭐ star the repo and 🔔 subscribe so you never miss one.
 
@@ -102,12 +103,19 @@ DrIbrarAhmedAI/
 │   ├── collect_*.py / analyze_*.py / *_ideas.py / build_hook.py
 │   ├── prompts/idea_score.txt← the scoring rubric
 │   ├── data/ (sample CSVs)   └── output/ (generated brief)
-└── hook-agent/               ← "EP 02 — AI Beat My Hook by 48 Points"
-    ├── README.md             ← signals, pipeline, recorded vs live
-    ├── hook_agent.py         ← the one command (recorded run + --live)
-    ├── scrape/extract/generate/score_*.py
-    ├── prompts/hook_score.txt← the 3-signal rubric
-    └── data/ (niche lib + recorded run)  └── output/ (generated brief)
+├── hook-agent/               ← "EP 02 — AI Beat My Hook by 48 Points"
+│   ├── README.md             ← signals, pipeline, recorded vs live
+│   ├── hook_agent.py         ← the one command (recorded run + --live)
+│   ├── scrape/extract/generate/score_*.py
+│   ├── prompts/hook_score.txt← the 3-signal rubric
+│   └── data/ (niche lib + recorded run)  └── output/ (generated brief)
+└── rvc-voice-cloning/        ← "Clone Your Voice Free — No ElevenLabs (RVC)"
+    ├── README.md             ← walkthrough + tonight checklist 1→12
+    ├── record_voice.py       ← capture YOUR voice into data/raw/
+    ├── prepare.py / train_prep.py / infer.py / play_clone.py
+    ├── pipeline.py / quality_gate.py / compare.py
+    ├── consent.yaml / config.yaml
+    └── models/rvc/           ← place your .pth + .index here
 ```
 
 ---

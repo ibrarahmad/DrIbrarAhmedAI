@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+output/*.wav
+output/*.mp3
+models/rvc/*.pth
+models/rvc/*.index
+models/training_manifest.json
+.DS_Store

@@ -1,0 +1,20 @@
+# Own-voice-only boundary — ethics as an engineering gate
+
+policy: own_voice_only
+allowed:
+  - record_own_voice
+  - train_own_weights
+  - convert_own_script_audio
+blocked:
+  - clone_without_consent
+  - impersonate_third_party
+  - ship_stolen_weights
+
+require_explicit_consent: true
+consent_attestation: |
+  I confirm that every recording under data/raw was spoken by me
+  (or a person who gave written consent), and I will not use this
+  pipeline to impersonate anyone without permission.
+
+# Gate rejects infer/export when this is false.
+attested: false

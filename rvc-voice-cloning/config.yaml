@@ -1,0 +1,45 @@
+# RVC voice cloning companion — paths relative to this folder
+
+sample_rate: 40000
+speaker_name: "demo"
+
+min_clip_length_sec: 2.0
+max_clip_length_sec: 12.0
+min_dataset_minutes: 10.0
+
+export_integrated_lufs: -16.0
+export_true_peak_db_tp: -1.5
+export_mp3_bitrate_k: 192
+
+inference_default_preset: "clear"
+inference_presets:
+  natural:
+    index_rate: 0.75
+    filter_radius: 3
+    protect: 0.45
+    f0up_key: 0
+  clear:
+    index_rate: 0.80
+    filter_radius: 3
+    protect: 0.40
+    f0up_key: 0
+  broadcast:
+    index_rate: 0.85
+    filter_radius: 3
+    protect: 0.33
+    f0up_key: 0
+
+# Place your trained weights here after RVC/WebUI training.
+rvc_model_dir: "models/rvc"
+# Optional: path to Retrieval-based-Voice-Conversion-WebUI (or leave empty for dry-run).
+rvc_webui_root: ""
+# Template: {base_wav} {out_wav} {model_dir}
+# Empty string = Edge TTS only (baseline / dry-run).
+rvc_convert_command: ""
+
+rvc_f0method: "rmvpe"
+rvc_device: "cpu"
+
+edge_tts_voice: "en-US-GuyNeural"
+edge_tts_rate: "-5%"
+edge_tts_pitch: "+0Hz"

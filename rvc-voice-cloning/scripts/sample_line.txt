@@ -1,0 +1,2 @@
+Assalamu Alaikum. This is my voice after Retrieval-based Voice Conversion.
+Train once on clean speech. Convert any script into YouTube-ready narration.
