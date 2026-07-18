@@ -103,9 +103,12 @@ sh ./run.sh
 Open [http://localhost:7865](http://localhost:7865).  
 If the page is blank, wait for first-run downloads, then refresh.
 
-## Unsupported / slow device
+## Unsupported / slow device / OOM
 
-On Mac set **Device = cpu**. Lower **batch size** to `2` if training dies on RAM.
+- **macOS (Apple Silicon):** Device = `cpu`. Lower batch size to `2` if RAM dies.
+- **Windows + NVIDIA:** Device = CUDA / auto-detect. If **CUDA out of memory**, reduce batch size to `2`.
+- **Windows + AMD / Intel:** Device = DirectML (when offered by the WebUI / torch-directml build).
+- **No compatible GPU:** CPU fallback only — expect much slower training. CPU is not a “make Windows faster” switch.
 
 ## Empty or noisy dataset
 

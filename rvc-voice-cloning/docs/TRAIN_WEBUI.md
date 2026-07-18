@@ -1,4 +1,4 @@
-# Train your voice in RVC WebUI (macOS)
+# Train your voice in RVC WebUI (macOS + Windows)
 
 Library `rvc train` is still a stub upstream. Use the WebUI for training.
 
@@ -7,7 +7,13 @@ Upstream: https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI
 **One WebUI path (use everywhere):**
 
 ```bash
+# macOS / bash
 cd ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI
+```
+
+```powershell
+# Windows PowerShell
+cd "$HOME\DrIbrarAhmedAI\Retrieval-based-Voice-Conversion-WebUI"
 ```
 
 `setup_rvc.sh` (macOS) / `setup_rvc.ps1` (Windows) clones it next to the companion (`DrIbrarAhmedAI/rvc-voice-cloning` → sibling `Retrieval-based-Voice-Conversion-WebUI`) and installs WebUI `requirements.txt` plus `tools/download_models.py`.
@@ -61,10 +67,10 @@ Keep that terminal open. Open the **Train** tab.
 | Dataset folder | `~/DrIbrarAhmedAI/rvc-voice-cloning/data/segments/demo` |
 | Sample rate | `40k` |
 | F0 method | `rmvpe` |
-| Device | `cpu` on Mac (use `cuda` only with NVIDIA) |
+| Device | **macOS:** `cpu` (Apple Silicon) · **Windows:** NVIDIA → CUDA / auto-detect · AMD/Intel → DirectML · none → CPU fallback (slower) |
 | Epochs | `200` |
 | Save every epoch | `25` |
-| Batch size | `4` (use `2` if RAM is low) |
+| Batch size | `4` (use `2` if CUDA OOM / RAM is low) |
 | Version | `v2` |
 | Pretrained G | `assets/pretrained_v2/f0G40k.pth` |
 | Pretrained D | `assets/pretrained_v2/f0D40k.pth` |

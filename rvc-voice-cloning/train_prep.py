@@ -25,10 +25,10 @@ Exact fields:
   Dataset folder:   $HOME\DrIbrarAhmedAI\rvc-voice-cloning\data\segments\demo
   Sample rate:      40k
   F0 method:        rmvpe
-  Device:           cpu          # Windows (cuda if you have NVIDIA + CUDA torch)
+  Device:           NVIDIA → CUDA/auto · AMD/Intel → DirectML · else CPU fallback
   Epochs:           200
   Save every:       25
-  Batch size:       4            # use 2 if RAM low
+  Batch size:       4            # use 2 if CUDA OOM / RAM low
   Version:          v2
   Pretrained G:     assets/pretrained_v2/f0G40k.pth
   Pretrained D:     assets/pretrained_v2/f0D40k.pth
