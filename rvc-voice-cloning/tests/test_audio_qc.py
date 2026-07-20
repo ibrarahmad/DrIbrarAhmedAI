@@ -44,9 +44,9 @@ class AudioQcTests(unittest.TestCase):
         self.assertLess(rms, -6.0)
         self.assertEqual(label_metrics(rms, clip_ratio(pcm)), "clean")
 
-    def test_label_silence(self) -> None:
+    def test_label_silent(self) -> None:
         pcm = _silence(16000, 1.0)
-        self.assertEqual(label_metrics(rms_dbfs(pcm), 0.0), "silence")
+        self.assertEqual(label_metrics(rms_dbfs(pcm), 0.0), "silent")
 
     def test_label_clipped(self) -> None:
         pcm = _tone(16000, 0.5, amp=1.0)
@@ -96,15 +96,18 @@ class AudioQcTests(unittest.TestCase):
             # Point prepare at temp root by monkeypatching load path via --root API
             meta = prepare(root, raw, "myvoice")
             self.assertTrue(meta.is_file())
+            self.assertEqual(meta, root / "data" / "reports" / "myvoice.csv")
             seg = root / "data" / "segments" / "myvoice"
             keeps = list(seg.glob("seg_*.wav"))
             self.assertGreaterEqual(len(keeps), 2)
-            # Training folder must not contain drop_*.wav
+            # WebUI folder: WAV only — no metadata.csv, no rejected/
+            self.assertFalse((seg / "metadata.csv").is_file())
+            self.assertFalse((seg / "rejected").is_dir())
             self.assertEqual(list(seg.glob("drop_*.wav")), [])
+            self.assertTrue((root / "data" / "rejected" / "myvoice").is_dir())
             for wav in keeps:
                 m = measure_wav(wav)
                 self.assertEqual(m["label"], "clean")
-                # Real measured duration, not a fake 4.0 stub
                 self.assertNotAlmostEqual(float(m["duration_sec"]), 4.0, places=1)
 
 

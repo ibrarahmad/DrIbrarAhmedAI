@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Prepare own-voice recordings: raw → mono 40 kHz → silence-split segments + metadata.
+"""Prepare own-voice recordings: raw → mono 40 kHz → silence-split segments + report.
 
-Only KEEP (clean) clips are written into data/segments/<speaker>/ for WebUI training.
-Rejected clips go to data/segments/<speaker>/rejected/ with reasons in metadata.
+Layout (WebUI-safe):
+  data/segments/<speaker>/   clean training WAVs only
+  data/rejected/<speaker>/   dropped clips
+  data/reports/<speaker>.csv measured metadata
 """
 from __future__ import annotations
 
 import argparse
 import csv
-import shutil
 import sys
 from pathlib import Path
 
@@ -40,12 +41,27 @@ def prepare(root: Path, input_dir: Path, speaker: str) -> Path:
     raw_files = list_audio_files(input_dir)
     clean_dir = root / "data" / "clean" / speaker
     seg_dir = root / "data" / "segments" / speaker
-    reject_dir = seg_dir / "rejected"
+    reject_dir = root / "data" / "rejected" / speaker
+    report_dir = root / "data" / "reports"
     clean_dir.mkdir(parents=True, exist_ok=True)
     seg_dir.mkdir(parents=True, exist_ok=True)
     reject_dir.mkdir(parents=True, exist_ok=True)
+    report_dir.mkdir(parents=True, exist_ok=True)
 
-    # Honest rebuild each run (WebUI trains every WAV in the folder).
+    # Remove legacy in-folder rejects so WebUI never sees them.
+    legacy_reject = seg_dir / "rejected"
+    if legacy_reject.is_dir():
+        for old in legacy_reject.glob("*.wav"):
+            old.unlink()
+        try:
+            legacy_reject.rmdir()
+        except OSError:
+            pass
+    legacy_meta = seg_dir / "metadata.csv"
+    if legacy_meta.is_file():
+        legacy_meta.unlink()
+
+    # Honest rebuild each run (WebUI trains every file it finds in seg_dir).
     _clear_dir_wavs(clean_dir)
     _clear_dir_wavs(seg_dir)
     _clear_dir_wavs(reject_dir)
@@ -95,7 +111,7 @@ def prepare(root: Path, input_dir: Path, speaker: str) -> Path:
                 keep_i += 1
                 name = f"seg_{keep_i:03d}.wav"
                 write_wav(seg_dir / name, clip, sr)
-                row["path"] = name
+                row["path"] = f"data/segments/{speaker}/{name}"
                 keep_rows.append(row)
                 print(
                     f"  KEEP  {name}  {dur:.2f}s  rms={rms:.1f}  "
@@ -105,14 +121,14 @@ def prepare(root: Path, input_dir: Path, speaker: str) -> Path:
                 drop_i += 1
                 name = f"drop_{drop_i:03d}.wav"
                 write_wav(reject_dir / name, clip, sr)
-                row["path"] = f"rejected/{name}"
+                row["path"] = f"data/rejected/{speaker}/{name}"
                 drop_rows.append(row)
                 print(
                     f"  DROP  {name}  {dur:.2f}s  rms={rms:.1f}  "
                     f"clip={ratio:.3%}  → {label.upper()}"
                 )
 
-    meta_path = seg_dir / "metadata.csv"
+    meta_path = report_dir / f"{speaker}.csv"
     fieldnames = ["path", "duration_sec", "rms_dbfs", "clip_ratio", "label", "source"]
     with meta_path.open("w", encoding="utf-8", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=fieldnames)
@@ -126,6 +142,8 @@ def prepare(root: Path, input_dir: Path, speaker: str) -> Path:
         f"(KEEP={len(keep_rows)} · DROP={len(drop_rows)} · "
         f"{clean_sec / 60:.2f} clean minutes)"
     )
+    print(f"WebUI folder (WAV only): data/segments/{speaker}/")
+    print(f"Rejected clips:          data/rejected/{speaker}/")
     if not keep_rows:
         raise SystemExit(
             "No clean segments produced. Re-record in a quieter room, "
@@ -146,8 +164,7 @@ def main() -> int:
     if not input_dir.is_absolute():
         input_dir = args.root / input_dir
     meta = prepare(args.root, input_dir, speaker)
-    print(f"READY · metadata={meta.relative_to(args.root)}")
-    print(f"WebUI dataset folder: {args.root / 'data' / 'segments' / speaker}")
+    print(f"READY · report={meta.relative_to(args.root)}")
     return 0
 
 

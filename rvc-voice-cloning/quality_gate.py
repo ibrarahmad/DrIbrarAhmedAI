@@ -27,7 +27,9 @@ def check_dataset(root: Path) -> list[str]:
     cfg = load_config(root)
     speaker = cfg.get("speaker_name") or DEFAULT_SPEAKER
     seg_dir = root / "data" / "segments" / speaker
-    meta_path = seg_dir / "metadata.csv"
+    meta_path = root / "data" / "reports" / f"{speaker}.csv"
+    if not meta_path.is_file():
+        meta_path = seg_dir / "metadata.csv"
     rows = read_metadata(meta_path)
     errors: list[str] = []
     train_wavs = list(seg_dir.glob("seg_*.wav"))
@@ -35,13 +37,13 @@ def check_dataset(root: Path) -> list[str]:
         errors.append(f"no training WAVs in {seg_dir.relative_to(root)}")
         return errors
     if not rows:
-        errors.append(f"no metadata at {meta_path.relative_to(root)}")
+        errors.append(f"no report at {meta_path.relative_to(root)}")
         return errors
     clean = [
         r
         for r in rows
         if (r.get("label") or "").lower() == "clean"
-        and not str(r.get("path") or "").startswith("rejected/")
+        and "rejected" not in str(r.get("path") or "")
     ]
     total_sec = sum(float(r.get("duration_sec") or 0) for r in clean)
     min_minutes = float(cfg.get("min_dataset_minutes") or 10)
@@ -49,9 +51,16 @@ def check_dataset(root: Path) -> list[str]:
         errors.append(
             f"clean speech {total_sec/60:.1f} min < min_dataset_minutes={min_minutes}"
         )
-    noisy = [r for r in rows if (r.get("label") or "").lower() in {"noisy", "reverb"}]
-    if noisy:
-        errors.append(f"{len(noisy)} noisy/reverb rows - clean before train")
+    bad = [
+        r
+        for r in rows
+        if (r.get("label") or "").lower()
+        in {"too-hot", "clipped", "silent", "noisy", "reverb", "silence"}
+    ]
+    if bad:
+        errors.append(
+            f"{len(bad)} dropped rows (clipped/too-hot/silent) — re-prepare before train"
+        )
     return errors
 
 

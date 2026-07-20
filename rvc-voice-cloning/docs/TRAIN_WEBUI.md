@@ -87,18 +87,22 @@ Keep that terminal open. Open the **Train** tab.
 | File | Typical path |
 |------|----------------|
 | Model `.pth` | `~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI/assets/weights/myvoice.pth` |
-| Index `.index` | `~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI/logs/myvoice/*.index` |
+| Index `.index` | Prefer `logs/myvoice/added_*.index` (also creates `trained_*.index`) |
 
 ### Copy into the companion
 
 ```bash
-cp ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI/assets/weights/myvoice.pth \
-  ~/DrIbrarAhmedAI/rvc-voice-cloning/models/rvc/speaker.pth
+cd ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI
 
-cp ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI/logs/myvoice/*.index \
-  ~/DrIbrarAhmedAI/rvc-voice-cloning/models/rvc/
+cp assets/weights/myvoice.pth \
+  ../rvc-voice-cloning/models/rvc/speaker.pth
 
-cd ~/DrIbrarAhmedAI/rvc-voice-cloning
+# RVC writes trained_*.index and added_*.index — copy the latest added_ index only
+latest_index=$(ls -t logs/myvoice/added_*.index | head -1)
+cp "$latest_index" \
+  ../rvc-voice-cloning/models/rvc/myvoice.index
+
+cd ../rvc-voice-cloning
 python configure_rvc.py --check
 ```
 

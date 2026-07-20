@@ -18,7 +18,7 @@ def verify(root: Path, input_dir: Path, min_minutes: float) -> int:
     files = list_audio_files(input_dir)
     if not files:
         print("Files: 0")
-        print("Total speech: 0.0 minutes")
+        print("Total audio: 0.0 minutes")
         print("Clipped files: 0")
         print("STATUS: NO RECORDINGS")
         print(
@@ -44,7 +44,7 @@ def verify(root: Path, input_dir: Path, min_minutes: float) -> int:
 
     print("")
     print(f"Files: {len(files)}")
-    print(f"Total speech: {total / 60:.1f} minutes")
+    print(f"Total audio: {total / 60:.1f} minutes")
     print(f"Clipped files: {clipped_files}")
 
     if total >= min_minutes * 60 and clipped_files > 0:

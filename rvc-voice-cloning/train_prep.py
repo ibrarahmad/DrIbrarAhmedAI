@@ -49,7 +49,10 @@ Click IN ORDER:
 Copy weights into companion:
   Copy-Item "assets\weights\myvoice.pth" `
     "..\rvc-voice-cloning\models\rvc\speaker.pth"
-  Copy-Item "logs\myvoice\*.index" `
+  $latest = Get-ChildItem "logs\myvoice\added_*.index" |
+    Sort-Object LastWriteTime -Descending |
+    Select-Object -First 1
+  Copy-Item $latest.FullName `
     "..\rvc-voice-cloning\models\rvc\myvoice.index"
 
 cd "$HOME\DrIbrarAhmedAI\rvc-voice-cloning"
@@ -88,7 +91,8 @@ Click IN ORDER:
 
 Copy weights into companion:
   cp assets/weights/myvoice.pth  ~/DrIbrarAhmedAI/rvc-voice-cloning/models/rvc/speaker.pth
-  cp logs/myvoice/*.index        ~/DrIbrarAhmedAI/rvc-voice-cloning/models/rvc/myvoice.index
+  latest_index=$(ls -t logs/myvoice/added_*.index | head -1)
+  cp "$latest_index"             ~/DrIbrarAhmedAI/rvc-voice-cloning/models/rvc/myvoice.index
 
 cd ~/DrIbrarAhmedAI/rvc-voice-cloning
 python configure_rvc.py --check
@@ -103,21 +107,28 @@ def train_prep(root: Path) -> Path:
     cfg = load_config(root)
     speaker = cfg.get("speaker_name") or DEFAULT_SPEAKER
     seg_dir = root / "data" / "segments" / speaker
-    meta_path = seg_dir / "metadata.csv"
+    meta_path = root / "data" / "reports" / f"{speaker}.csv"
+    if not meta_path.is_file():
+        meta_path = seg_dir / "metadata.csv"
     if not meta_path.is_file():
         raise SystemExit(
-            "No metadata yet. Run:\n"
+            "No dataset report yet. Run:\n"
             f"  python prepare.py --input data/raw --speaker {speaker}\n"
             "Need 10+ minutes clean speech in data/raw/ first."
         )
     meta = read_metadata(meta_path)
-    clean = [
-        r
-        for r in meta
-        if (r.get("label") or "").lower() == "clean"
-        and not str(r.get("path") or "").startswith("rejected/")
-        and (seg_dir / str(r.get("path") or "")).is_file()
-    ]
+    clean = []
+    for r in meta:
+        if (r.get("label") or "").lower() != "clean":
+            continue
+        rel = str(r.get("path") or "")
+        if "rejected" in rel:
+            continue
+        wav = root / rel if rel.startswith("data/") else seg_dir / Path(rel).name
+        if not wav.is_file():
+            wav = seg_dir / Path(rel).name
+        if wav.is_file():
+            clean.append(r)
     if not clean:
         raise SystemExit("No clean segments - run prepare.py / clean your data first.")
 

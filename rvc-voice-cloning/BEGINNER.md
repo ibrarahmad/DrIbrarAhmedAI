@@ -112,7 +112,7 @@ python analyze.py
 python next_step.py
 ```
 
-`prepare.py` converts each raw take to mono 40 kHz, splits long recordings into training segments, measures duration/loudness/clipping, and writes `data/segments/myvoice/metadata.csv`. Use the same name (`myvoice`) as the WebUI experiment.
+`prepare.py` converts each raw take to mono 40 kHz, splits long recordings into training segments, and measures duration/loudness/clipping. Clean WAVs go to `data/segments/myvoice/` (WebUI folder — WAV only). Rejected clips go to `data/rejected/myvoice/`. The report is `data/reports/myvoice.csv`. Use the same name (`myvoice`) as the WebUI experiment.
 
 ---
 

@@ -110,11 +110,12 @@ If the page is blank, wait for first-run downloads, then refresh.
 - **Windows + AMD / Intel:** Device = DirectML (when offered by the WebUI / torch-directml build).
 - **No compatible GPU:** CPU fallback only — expect much slower training. CPU is not a “make Windows faster” switch.
 
-## Empty or noisy dataset
+## Empty or clipped / too-hot dataset
 
 - Need **10+ minutes** clean speech total.
-- Drop noisy/reverb clips after `python analyze.py`.
+- Drop clipped / too-hot / silent clips after `python analyze.py`.
 - Re-run `python prepare.py --input data/raw --speaker myvoice`.
+- WebUI folder must stay WAV-only: `data/segments/myvoice/` (rejects live in `data/rejected/myvoice/`).
 
 
 ## `Failed building wheel for av` (FFmpeg 8)

@@ -53,14 +53,18 @@ def clip_ratio(pcm: bytes, *, thresh: int = 32000) -> float:
 
 
 def label_metrics(rms: float, ratio: float) -> str:
+    """Return clean | silent | clipped | too-hot.
+
+    too-hot means extremely loud / near-clip material — not a room-noise SNR score.
+    """
     if rms <= SILENCE_DBFS:
-        return "silence"
+        return "silent"
     if ratio >= CLIP_HARD:
         return "clipped"
     if rms > HOT_DBFS:
-        return "noisy"
+        return "too-hot"
     if ratio >= CLIP_SOFT and rms > CLIP_SOFT_DBFS:
-        return "noisy"
+        return "too-hot"
     return "clean"
 
 

@@ -35,8 +35,11 @@ def _has_segments(root: Path) -> bool:
     cfg = load_config(root)
     speaker = str(cfg.get("speaker_name") or DEFAULT_SPEAKER)
     seg_dir = root / "data" / "segments" / speaker
-    meta = seg_dir / "metadata.csv"
-    has_meta = meta.is_file() and meta.stat().st_size > 20
+    report = root / "data" / "reports" / f"{speaker}.csv"
+    legacy_meta = seg_dir / "metadata.csv"
+    has_meta = (report.is_file() and report.stat().st_size > 20) or (
+        legacy_meta.is_file() and legacy_meta.stat().st_size > 20
+    )
     has_wavs = any(seg_dir.glob("seg_*.wav"))
     return has_meta and has_wavs
 
@@ -144,7 +147,7 @@ def diagnose(root: Path) -> tuple[str, list[str]]:
             "  python verify_recordings.py --input data/raw --min-minutes 10",
             f"  python prepare.py --input data/raw --speaker {speaker}",
             "  python analyze.py",
-            "  # KEEP clean clips only in data/segments/<speaker>/",
+            "  # KEEP WAVs only in data/segments/<speaker>/  (report → data/reports/)",
             "  python next_step.py",
         ]
         return "need_prepare", lines
@@ -184,13 +187,15 @@ def diagnose(root: Path) -> tuple[str, list[str]]:
             lines += [
                 f'  Copy-Item "{webui}\\assets\\weights\\myvoice.pth" `',
                 f'    "{root}\\models\\rvc\\speaker.pth"',
-                f'  Copy-Item "{webui}\\logs\\myvoice\\*.index" `',
-                f'    "{root}\\models\\rvc\\myvoice.index"',
+                f'  $latest = Get-ChildItem "{webui}\\logs\\myvoice\\added_*.index" |',
+                "    Sort-Object LastWriteTime -Descending | Select-Object -First 1",
+                f'  Copy-Item $latest.FullName "{root}\\models\\rvc\\myvoice.index"',
             ]
         else:
             lines += [
                 f"  cp {webui}/assets/weights/myvoice.pth  {root}/models/rvc/speaker.pth",
-                f"  cp {webui}/logs/myvoice/*.index       {root}/models/rvc/myvoice.index",
+                f"  latest_index=$(ls -t {webui}/logs/myvoice/added_*.index | head -1)",
+                f'  cp "$latest_index"  {root}/models/rvc/myvoice.index',
             ]
         lines += [
             "",
