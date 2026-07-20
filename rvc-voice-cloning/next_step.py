@@ -32,7 +32,7 @@ def _count_raw(root: Path) -> int:
 
 def _has_segments(root: Path) -> bool:
     cfg = load_config(root)
-    speaker = str(cfg.get("speaker_name") or "demo")
+    speaker = str(cfg.get("speaker_name") or "myvoice")
     meta = root / "data" / "segments" / speaker / "metadata.csv"
     return meta.is_file() and meta.stat().st_size > 20
 
@@ -118,9 +118,10 @@ def diagnose(root: Path) -> tuple[str, list[str]]:
             "",
             "NEXT:",
             "  python open_recorder.py",
-            "  # Record → Stop → Save WAV → put file in data/raw/",
-            "  # Or use QuickTime Audio Recording → save into data/raw/",
-            "  python play_clone.py --wav data/raw/YOUR_FILE.wav",
+            "  # Record → Stop → Save WAV (browser → ~/Downloads/)",
+            "  mkdir -p data/raw",
+            "  mv ~/Downloads/my_voice_*.wav data/raw/",
+            "  python verify_recordings.py --input data/raw --min-minutes 10",
             "  python next_step.py",
         ]
         return "need_record", lines
@@ -131,13 +132,15 @@ def diagnose(root: Path) -> tuple[str, list[str]]:
 
     # 6 prepare
     if not _has_segments(root):
+        speaker = str(cfg.get("speaker_name") or "myvoice")
         lines += [
             "BLOCKED: dataset not prepared yet",
             "",
             "NEXT:",
-            "  python prepare.py --input data/raw --speaker demo",
+            "  python verify_recordings.py --input data/raw --min-minutes 10",
+            f"  python prepare.py --input data/raw --speaker {speaker}",
             "  python analyze.py",
-            "  # KEEP clean clips · DROP noisy/reverb",
+            "  # KEEP clean clips · DROP clipped/noisy/silence",
             "  python next_step.py",
         ]
         return "need_prepare", lines
@@ -178,12 +181,12 @@ def diagnose(root: Path) -> tuple[str, list[str]]:
                 f'  Copy-Item "{webui}\\assets\\weights\\myvoice.pth" `',
                 f'    "{root}\\models\\rvc\\speaker.pth"',
                 f'  Copy-Item "{webui}\\logs\\myvoice\\*.index" `',
-                f'    "{root}\\models\\rvc\\"',
+                f'    "{root}\\models\\rvc\\myvoice.index"',
             ]
         else:
             lines += [
                 f"  cp {webui}/assets/weights/myvoice.pth  {root}/models/rvc/speaker.pth",
-                f"  cp {webui}/logs/myvoice/*.index       {root}/models/rvc/",
+                f"  cp {webui}/logs/myvoice/*.index       {root}/models/rvc/myvoice.index",
             ]
         lines += [
             "",

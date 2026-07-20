@@ -10,7 +10,7 @@
 # Full guide: docs/RVC_SETUP.md
 
 sample_rate: 40000
-speaker_name: "demo"
+speaker_name: "myvoice"
 
 min_clip_length_sec: 2.0
 max_clip_length_sec: 12.0

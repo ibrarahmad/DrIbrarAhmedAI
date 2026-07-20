@@ -28,11 +28,10 @@ It tells you the **next** command only.
 
 ```bash
 # Homebrew required on a clean Mac: https://brew.sh
-brew install ffmpeg git
-python3 --version    # need 3.10 or 3.11 (not 3.9, not 3.12+)
-# If python is too old/new:
-#   brew install python@3.11
-#   python3.11 -m venv .venv
+brew install ffmpeg git python@3.11
+python3.11 --version
+git --version
+ffmpeg -version
 ```
 
 **Windows (PowerShell)**
@@ -51,10 +50,11 @@ python --version    # need 3.10 or 3.11 (not 3.9, not 3.12+)
 **macOS**
 
 ```bash
-git clone https://github.com/ibrarahmad/DrIbrarAhmedAI
+git clone https://github.com/ibrarahmad/DrIbrarAhmedAI.git
 cd DrIbrarAhmedAI/rvc-voice-cloning
-python3 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
+python --version
 bash setup_rvc.sh
 python configure_rvc.py --prefer-library
 python next_step.py
@@ -80,13 +80,19 @@ python next_step.py
 Need **10+ minutes** total. Quiet room. Same mic.
 One 20-second take is not enough.
 
-**Primary (recommended):** repository recorder — saves WAV into `data/raw/`.
+**Primary (recommended):** repository recorder. The browser Save WAV goes to `~/Downloads/` — then move it into the repo.
 
 ```bash
 python open_recorder.py
-# Save WAV files into data/raw/
+# Record → Stop → click Save WAV
+mkdir -p data/raw
+mv ~/Downloads/my_voice_*.wav data/raw/
+ls -lh data/raw/*.wav
+python verify_recordings.py --input data/raw --min-minutes 10
 python next_step.py
 ```
+
+Recorder output is mono WAV (device sample rate). `prepare.py` resamples to 40 kHz.
 
 **Optional:** QuickTime Player often saves `.m4a`. Convert before prepare:
 
@@ -101,10 +107,12 @@ The pipeline expects WAV. Do not leave files as m4a.
 ## Step 3 — prepare
 
 ```bash
-python prepare.py --input data/raw --speaker demo
+python prepare.py --input data/raw --speaker myvoice
 python analyze.py
 python next_step.py
 ```
+
+`prepare.py` converts each raw take to mono 40 kHz, splits long recordings into training segments, measures duration/loudness/clipping, and writes `data/segments/myvoice/metadata.csv`. Use the same name (`myvoice`) as the WebUI experiment.
 
 ---
 

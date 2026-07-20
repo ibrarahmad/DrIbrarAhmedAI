@@ -24,14 +24,14 @@ cd "$HOME\DrIbrarAhmedAI\Retrieval-based-Voice-Conversion-WebUI"
 2. Run:
 
 ```bash
-python prepare.py --input data/raw --speaker demo
+python prepare.py --input data/raw --speaker myvoice
 python analyze.py
 ```
 
 3. Dataset folder for WebUI:
 
 ```text
-~/DrIbrarAhmedAI/rvc-voice-cloning/data/segments/demo
+~/DrIbrarAhmedAI/rvc-voice-cloning/data/segments/myvoice
 ```
 
 ## 1) Training setup — launch WebUI
@@ -64,7 +64,7 @@ Keep that terminal open. Open the **Train** tab.
 | Field | Value |
 |-------|--------|
 | Experiment name | `myvoice` |
-| Dataset folder | `~/DrIbrarAhmedAI/rvc-voice-cloning/data/segments/demo` |
+| Dataset folder | `~/DrIbrarAhmedAI/rvc-voice-cloning/data/segments/myvoice` |
 | Sample rate | `40k` |
 | F0 method | `rmvpe` |
 | Device | **macOS:** `cpu` (Apple Silicon) · **Windows:** NVIDIA → CUDA / auto-detect · AMD/Intel → DirectML · none → CPU fallback (slower) |

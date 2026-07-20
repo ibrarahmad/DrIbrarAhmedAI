@@ -22,7 +22,7 @@ python infer-web.py
 
 Exact fields:
   Experiment name:  myvoice
-  Dataset folder:   $HOME\DrIbrarAhmedAI\rvc-voice-cloning\data\segments\demo
+  Dataset folder:   $HOME\DrIbrarAhmedAI\rvc-voice-cloning\data\segments\myvoice
   Sample rate:      40k
   F0 method:        rmvpe
   Device:           NVIDIA → CUDA/auto · AMD/Intel → DirectML · else CPU fallback
@@ -43,7 +43,7 @@ Copy weights into companion:
   Copy-Item "assets\weights\myvoice.pth" `
     "..\rvc-voice-cloning\models\rvc\speaker.pth"
   Copy-Item "logs\myvoice\*.index" `
-    "..\rvc-voice-cloning\models\rvc\"
+    "..\rvc-voice-cloning\models\rvc\myvoice.index"
 
 cd "$HOME\DrIbrarAhmedAI\rvc-voice-cloning"
 python configure_rvc.py --check
@@ -62,7 +62,7 @@ python infer-web.py
 
 Exact fields:
   Experiment name:  myvoice
-  Dataset folder:   ~/DrIbrarAhmedAI/rvc-voice-cloning/data/segments/demo
+  Dataset folder:   ~/DrIbrarAhmedAI/rvc-voice-cloning/data/segments/myvoice
   Sample rate:      40k
   F0 method:        rmvpe
   Device:           cpu          # Mac
@@ -81,7 +81,7 @@ Click IN ORDER:
 
 Copy weights into companion:
   cp assets/weights/myvoice.pth  ~/DrIbrarAhmedAI/rvc-voice-cloning/models/rvc/speaker.pth
-  cp logs/myvoice/*.index        ~/DrIbrarAhmedAI/rvc-voice-cloning/models/rvc/
+  cp logs/myvoice/*.index        ~/DrIbrarAhmedAI/rvc-voice-cloning/models/rvc/myvoice.index
 
 cd ~/DrIbrarAhmedAI/rvc-voice-cloning
 python configure_rvc.py --check
@@ -94,13 +94,13 @@ python next_step.py
 
 def train_prep(root: Path) -> Path:
     cfg = load_config(root)
-    speaker = cfg.get("speaker_name") or "demo"
+    speaker = cfg.get("speaker_name") or "myvoice"
     seg_dir = root / "data" / "segments" / speaker
     meta_path = seg_dir / "metadata.csv"
     if not meta_path.is_file():
         raise SystemExit(
             "No metadata yet. Run:\n"
-            "  python prepare.py --input data/raw --speaker demo\n"
+            "  python prepare.py --input data/raw --speaker myvoice\n"
             "Need 10+ minutes clean speech in data/raw/ first."
         )
     meta = read_metadata(meta_path)

@@ -114,7 +114,7 @@ If the page is blank, wait for first-run downloads, then refresh.
 
 - Need **10+ minutes** clean speech total.
 - Drop noisy/reverb clips after `python analyze.py`.
-- Re-run `python prepare.py --input data/raw --speaker demo`.
+- Re-run `python prepare.py --input data/raw --speaker myvoice`.
 
 
 ## `Failed building wheel for av` (FFmpeg 8)
