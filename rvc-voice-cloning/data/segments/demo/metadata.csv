@@ -1,2 +1,2 @@
-path,duration_sec,rms_dbfs,label
-seg_001.wav,4.0,-18.0,clean
+path,duration_sec,rms_dbfs,clip_ratio,label
+seg_001.wav,8.136,-20.65,0.0000,clean

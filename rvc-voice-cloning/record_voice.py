@@ -30,7 +30,7 @@ GUIDE = """
 
 ## Next
   python record_voice.py --check
-  python prepare.py --input data/raw --speaker demo
+  python prepare.py --input data/raw --speaker myvoice
   python analyze.py
   python train_prep.py
   # train in RVC/WebUI → models/rvc/speaker.pth + .index

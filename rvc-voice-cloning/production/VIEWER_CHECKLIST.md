@@ -10,7 +10,7 @@ python next_step.py
 [ ] 2. Clone repo · `python3 -m venv .venv` · `source .venv/bin/activate`
 [ ] 3. `bash setup_rvc.sh` · `python configure_rvc.py --prefer-library`
 [ ] 4. Record **10+ minutes** clean speech → `data/raw/` (`python open_recorder.py`)
-[ ] 5. `python prepare.py --input data/raw --speaker demo` · `python analyze.py`
+[ ] 5. `python prepare.py --input data/raw --speaker myvoice` · `python analyze.py`
 [ ] 6. `python train_prep.py` · open `docs/TRAIN_WEBUI.md`
 [ ] 7. `cd ~/DrIbrarAhmedAI/Retrieval-based-Voice-Conversion-WebUI` · `python infer-web.py`
 [ ] 8. Browser `http://localhost:7865` · Train tab · exact fields in TRAIN_WEBUI.md

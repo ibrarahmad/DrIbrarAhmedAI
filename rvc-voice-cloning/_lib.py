@@ -11,6 +11,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parent
 
+# Default speaker / experiment name used across prepare → WebUI → export.
+DEFAULT_SPEAKER = "myvoice"
+
 
 def setup_script_hint() -> str:
     """Platform setup command shown to beginners (matches video Slide 4)."""

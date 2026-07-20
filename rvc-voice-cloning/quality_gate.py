@@ -6,7 +6,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from _lib import ROOT, load_config, load_consent, read_metadata
+from _lib import DEFAULT_SPEAKER, ROOT, load_config, load_consent, read_metadata
 
 
 def check_consent(root: Path, *, require_attested: bool = True) -> list[str]:
@@ -25,14 +25,24 @@ def check_consent(root: Path, *, require_attested: bool = True) -> list[str]:
 
 def check_dataset(root: Path) -> list[str]:
     cfg = load_config(root)
-    speaker = cfg.get("speaker_name") or "demo"
-    meta_path = root / "data" / "segments" / speaker / "metadata.csv"
+    speaker = cfg.get("speaker_name") or DEFAULT_SPEAKER
+    seg_dir = root / "data" / "segments" / speaker
+    meta_path = seg_dir / "metadata.csv"
     rows = read_metadata(meta_path)
     errors: list[str] = []
+    train_wavs = list(seg_dir.glob("seg_*.wav"))
+    if not train_wavs:
+        errors.append(f"no training WAVs in {seg_dir.relative_to(root)}")
+        return errors
     if not rows:
         errors.append(f"no metadata at {meta_path.relative_to(root)}")
         return errors
-    clean = [r for r in rows if (r.get("label") or "").lower() == "clean"]
+    clean = [
+        r
+        for r in rows
+        if (r.get("label") or "").lower() == "clean"
+        and not str(r.get("path") or "").startswith("rejected/")
+    ]
     total_sec = sum(float(r.get("duration_sec") or 0) for r in clean)
     min_minutes = float(cfg.get("min_dataset_minutes") or 10)
     if total_sec / 60.0 < min_minutes:

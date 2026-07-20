@@ -8,13 +8,13 @@ from analyze import analyze
 from infer import infer
 from prepare import prepare
 from train_prep import train_prep
-from _lib import ROOT, load_config, read_text_file
+from _lib import DEFAULT_SPEAKER, ROOT, load_config, read_text_file
 
 
 def tool_prepare(raw_dir: str | Path | None = None, speaker: str | None = None) -> str:
     """Clean mono clips + metadata.csv. Never trains on third-party audio."""
     cfg = load_config(ROOT)
-    sp = speaker or cfg.get("speaker_name") or "demo"
+    sp = speaker or cfg.get("speaker_name") or DEFAULT_SPEAKER
     src = Path(raw_dir) if raw_dir else ROOT / "data" / "raw"
     meta = prepare(ROOT, src, sp)
     return str(meta.relative_to(ROOT))

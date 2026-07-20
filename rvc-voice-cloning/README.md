@@ -70,11 +70,12 @@ Direct file: https://github.com/ibrarahmad/DrIbrarAhmedAI/blob/main/rvc-voice-cl
 ## Quick install (macOS)
 
 ```bash
-brew install ffmpeg
+brew install ffmpeg git python@3.11
 
-git clone https://github.com/ibrarahmad/DrIbrarAhmedAI
+git clone https://github.com/ibrarahmad/DrIbrarAhmedAI.git
 cd DrIbrarAhmedAI/rvc-voice-cloning
-python3 -m venv .venv && source .venv/bin/activate
+python3.11 -m venv .venv
+source .venv/bin/activate
 bash setup_rvc.sh
 python configure_rvc.py --prefer-library
 python next_step.py
@@ -103,8 +104,9 @@ You hear **new words** in **your** voice. Comment **FREECLONE** on the video.
 | `docs/TROUBLESHOOT.md` | Common failures |
 | `setup_rvc.ps1` | **Windows:** install pinned official RVC + WebUI |
 | `setup_rvc.sh` | **macOS:** install pinned official RVC + WebUI |
-| `open_recorder.py` | Record → `data/raw/` |
-| `prepare.py` / `analyze.py` | Clean dataset |
+| `open_recorder.py` | Browser recorder (Save WAV → move into `data/raw/`) |
+| `verify_recordings.py` | Confirm 10+ minutes before prepare |
+| `prepare.py` / `analyze.py` | Split + measure dataset (`myvoice`) |
 | `train_prep.py` | Prints exact WebUI steps |
 | `infer.py` / `play_clone.py` | Generate + hear clone |
 | `demo_complete.py` | Full demo after weights exist |

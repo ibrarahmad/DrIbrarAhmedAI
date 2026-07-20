@@ -55,7 +55,7 @@ def main() -> int:
     print(f"[ok] raw wav: {raw.relative_to(root)}")
 
     _run([py, "configure_rvc.py", "--prefer-library"], cwd=root)
-    _run([py, "prepare.py", "--input", "data/raw", "--speaker", "demo"], cwd=root)
+    _run([py, "prepare.py", "--input", "data/raw", "--speaker", "myvoice"], cwd=root)
     _run([py, "analyze.py"], cwd=root)
     _run([py, "train_prep.py"], cwd=root)
 

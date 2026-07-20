@@ -24,7 +24,15 @@ import subprocess
 import sys
 from pathlib import Path
 
-from _lib import ROOT, find_rvc_weights, load_config, read_text_file, which, write_json
+from _lib import (
+    DEFAULT_SPEAKER,
+    ROOT,
+    find_rvc_weights,
+    load_config,
+    read_text_file,
+    which,
+    write_json,
+)
 from infer import infer
 from play_clone import play
 from prepare import prepare
@@ -67,7 +75,7 @@ def run_demo(
     play_audio: bool = True,
 ) -> int:
     cfg = load_config(root)
-    speaker = str(cfg.get("speaker_name") or "demo")
+    speaker = str(cfg.get("speaker_name") or DEFAULT_SPEAKER)
     model_dir = root / str(cfg.get("rvc_model_dir") or "models/rvc")
 
     _banner("COMPLETE DEMO · official RVC library")

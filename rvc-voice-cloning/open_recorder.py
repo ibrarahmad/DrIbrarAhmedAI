@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Open the browser voice recorder (saves WAV for data/raw/)."""
+"""Open the browser voice recorder (Save WAV → move file into data/raw/)."""
 from __future__ import annotations
 
 import argparse

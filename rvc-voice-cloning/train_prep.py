@@ -7,7 +7,14 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from _lib import ROOT, find_rvc_weights, load_config, read_metadata, write_json
+from _lib import (
+    DEFAULT_SPEAKER,
+    ROOT,
+    find_rvc_weights,
+    load_config,
+    read_metadata,
+    write_json,
+)
 
 
 def _rvc_steps() -> str:
@@ -94,17 +101,23 @@ python next_step.py
 
 def train_prep(root: Path) -> Path:
     cfg = load_config(root)
-    speaker = cfg.get("speaker_name") or "myvoice"
+    speaker = cfg.get("speaker_name") or DEFAULT_SPEAKER
     seg_dir = root / "data" / "segments" / speaker
     meta_path = seg_dir / "metadata.csv"
     if not meta_path.is_file():
         raise SystemExit(
             "No metadata yet. Run:\n"
-            "  python prepare.py --input data/raw --speaker myvoice\n"
+            f"  python prepare.py --input data/raw --speaker {speaker}\n"
             "Need 10+ minutes clean speech in data/raw/ first."
         )
     meta = read_metadata(meta_path)
-    clean = [r for r in meta if (r.get("label") or "").lower() == "clean"]
+    clean = [
+        r
+        for r in meta
+        if (r.get("label") or "").lower() == "clean"
+        and not str(r.get("path") or "").startswith("rejected/")
+        and (seg_dir / str(r.get("path") or "")).is_file()
+    ]
     if not clean:
         raise SystemExit("No clean segments - run prepare.py / clean your data first.")
 

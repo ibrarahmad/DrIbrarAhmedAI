@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 
 from _lib import (
+    DEFAULT_SPEAKER,
     ROOT,
     find_rvc_weights,
     load_config,
@@ -32,9 +33,12 @@ def _count_raw(root: Path) -> int:
 
 def _has_segments(root: Path) -> bool:
     cfg = load_config(root)
-    speaker = str(cfg.get("speaker_name") or "myvoice")
-    meta = root / "data" / "segments" / speaker / "metadata.csv"
-    return meta.is_file() and meta.stat().st_size > 20
+    speaker = str(cfg.get("speaker_name") or DEFAULT_SPEAKER)
+    seg_dir = root / "data" / "segments" / speaker
+    meta = seg_dir / "metadata.csv"
+    has_meta = meta.is_file() and meta.stat().st_size > 20
+    has_wavs = any(seg_dir.glob("seg_*.wav"))
+    return has_meta and has_wavs
 
 
 def _library_ok() -> bool:
@@ -132,7 +136,7 @@ def diagnose(root: Path) -> tuple[str, list[str]]:
 
     # 6 prepare
     if not _has_segments(root):
-        speaker = str(cfg.get("speaker_name") or "myvoice")
+        speaker = str(cfg.get("speaker_name") or DEFAULT_SPEAKER)
         lines += [
             "BLOCKED: dataset not prepared yet",
             "",
@@ -140,7 +144,7 @@ def diagnose(root: Path) -> tuple[str, list[str]]:
             "  python verify_recordings.py --input data/raw --min-minutes 10",
             f"  python prepare.py --input data/raw --speaker {speaker}",
             "  python analyze.py",
-            "  # KEEP clean clips · DROP clipped/noisy/silence",
+            "  # KEEP clean clips only in data/segments/<speaker>/",
             "  python next_step.py",
         ]
         return "need_prepare", lines

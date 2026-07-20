@@ -48,8 +48,8 @@ rvc_backend: "library"
 rvc_webui_root: ""
 
 # Wired by configure_rvc.py → rvc_infer_bridge.py {base_wav} {out_wav} {model_dir}
-# Empty string = Edge TTS only (baseline / dry-run until RVC is built).
-rvc_convert_command: "python3 /Users/ibrar/app/DrIbrarAhmedAI/rvc-voice-cloning/rvc_infer_bridge.py {base_wav} {out_wav} {model_dir}"
+# Leave empty in the shipped config. Run: python configure_rvc.py --prefer-library
+rvc_convert_command: ""
 
 rvc_f0method: "rmvpe"
 rvc_device: "cpu"

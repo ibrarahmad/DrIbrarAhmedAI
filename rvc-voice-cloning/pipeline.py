@@ -6,7 +6,14 @@ import argparse
 import sys
 from pathlib import Path
 
-from _lib import ROOT, find_rvc_weights, load_config, read_text_file, write_json
+from _lib import (
+    DEFAULT_SPEAKER,
+    ROOT,
+    find_rvc_weights,
+    load_config,
+    read_text_file,
+    write_json,
+)
 from analyze import analyze
 from export import export_audio
 from infer import infer
@@ -23,7 +30,7 @@ def run_pipeline(
     baseline_only: bool = False,
 ) -> int:
     cfg = load_config(root)
-    speaker = cfg.get("speaker_name") or "demo"
+    speaker = cfg.get("speaker_name") or DEFAULT_SPEAKER
     print("pipeline: consent → prepare → analyze → train_prep → infer → export")
     print(f"speaker={speaker}  gate={'off' if skip_gate else 'on'}")
     print("")
